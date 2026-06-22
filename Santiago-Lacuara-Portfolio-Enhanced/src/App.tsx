@@ -68,7 +68,7 @@ function AppContent() {
             {t("contact.inquiries")}
           </span>
 
-          <h2 className="text-[14vw] md:text-[10vw] font-display font-light uppercase leading-[0.9] mb-12 md:mb-16 tracking-tighter">
+          <h2 className="text-[14vw] md:text-[10vw] font-display font-bold uppercase leading-[0.9] mb-12 md:mb-16 tracking-tighter">
             <span className="gold-text">{t("contact.title")}</span>
           </h2>
 
