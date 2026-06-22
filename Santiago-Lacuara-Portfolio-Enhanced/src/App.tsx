@@ -7,14 +7,28 @@ import Navbar from "./components/Navbar";
 import HeroAboutSection from "./components/HeroAboutSection";
 import ProjectGrid from "./components/ProjectGrid";
 import Marquee from "./components/Marquee";
-import { motion } from "motion/react";
-import { useEffect, useRef } from "react";
+import Loader from "./components/Loader";
+import Magnetic from "./components/Magnetic";
+import { motion, AnimatePresence, useScroll } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import { LanguageProvider, useLanguage } from "./context/LanguageContext";
 import { ThemeProvider } from "./context/ThemeContext";
 
 function AppContent() {
   const { t } = useLanguage();
   const gridRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll();
+
+  // Intro loader (shows once on load, then reveals the site)
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const tmr = setTimeout(() => setLoading(false), 1600);
+    return () => clearTimeout(tmr);
+  }, []);
+  useEffect(() => {
+    document.body.style.overflow = loading ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [loading]);
 
   // Parallax: the global grid drifts slower than the page on scroll.
   useEffect(() => {
@@ -35,6 +49,18 @@ function AppContent() {
 
   return (
     <div className="text-white relative">
+      {/* Intro loader */}
+      <AnimatePresence>{loading && <Loader />}</AnimatePresence>
+
+      {/* Scroll progress bar */}
+      <motion.div
+        style={{ scaleX: scrollYProgress }}
+        className="fixed top-0 left-0 right-0 h-[2px] origin-left z-[150]"
+        aria-hidden
+      >
+        <div className="w-full h-full" style={{ backgroundColor: "#E9B872" }} />
+      </motion.div>
+
       {/* Global drifting orange blobs (whole page) */}
       <div className="bg-blobs" aria-hidden>
         <span className="gb gb1" /><span className="gb gb2" /><span className="gb gb3" /><span className="gb gb4" /><span className="gb gb5" />
@@ -72,13 +98,15 @@ function AppContent() {
             <span className="gold-text">{t("contact.title")}</span>
           </h2>
 
-          <a
-            href="mailto:santiago.lopezlacuara@gmail.com"
-            className="cursor-grow group inline-flex items-center gap-3 text-base md:text-2xl font-grotesk font-light border-b border-white/20 pb-2 hover:border-white transition-colors break-all"
-          >
-            <span>santiago.lopezlacuara@gmail.com</span>
-            <span className="hidden md:inline transition-transform group-hover:translate-x-1">→</span>
-          </a>
+          <Magnetic strength={0.4} className="inline-block">
+            <a
+              href="mailto:santiago.lopezlacuara@gmail.com"
+              className="cursor-grow group inline-flex items-center gap-3 text-base md:text-2xl font-grotesk font-light border-b border-white/20 pb-2 hover:border-white transition-colors break-all"
+            >
+              <span>santiago.lopezlacuara@gmail.com</span>
+              <span className="hidden md:inline transition-transform group-hover:translate-x-1">→</span>
+            </a>
+          </Magnetic>
 
           {/* Social row */}
           <div className="mt-16 flex flex-wrap items-center justify-center gap-8 text-[10px] font-grotesk uppercase tracking-[0.4em] text-white/50">
