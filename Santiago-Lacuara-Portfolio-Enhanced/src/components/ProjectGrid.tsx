@@ -155,15 +155,14 @@ export default function ProjectGrid() {
           {projects.map((project, index) => (
             <motion.div
               key={project.id}
-              layoutId={`card-${project.id}`}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: (index % 4) * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -8 }}
               onClick={() => handleProjectClick(project)}
               data-card-id={project.id}
-              style={{ borderRadius: 16 }}
-              className="cursor-grow group relative aspect-[3/4] overflow-hidden bg-zinc-900 cursor-pointer border border-white/5"
+              className="cursor-grow group relative aspect-[3/4] overflow-hidden bg-zinc-900 cursor-pointer rounded-2xl border border-white/5"
             >
               <img
                 src={project.image}
@@ -207,29 +206,20 @@ export default function ProjectGrid() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-12 bg-black/80 backdrop-blur-sm"
           >
             <motion.div
-              layoutId={`card-${selectedProject.id}`}
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              style={{ borderRadius: 24 }}
-              transition={{ type: "spring", stiffness: 260, damping: 30 }}
-              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto liquid-glass p-8 md:p-12 border border-white/10 shadow-2xl"
+              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto liquid-glass rounded-3xl p-8 md:p-12 border border-white/10 shadow-2xl"
             >
-              <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.25 }}
+              <button
                 onClick={() => setSelectedProject(null)}
                 className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors bg-black/20 hover:bg-black/40 p-2 rounded-full z-10"
                 aria-label="Close modal"
               >
                 <X size={24} />
-              </motion.button>
+              </button>
 
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ delay: 0.22, duration: 0.4 }}
-              >
               <div className="mb-8 md:mb-10">
                 <span className="text-[10px] font-poppins font-bold uppercase tracking-[0.3em] text-white/50 mb-2 block text-shadow-strong">
                   {projCat(selectedProject.category)}
@@ -259,7 +249,6 @@ export default function ProjectGrid() {
                   );
                 })}
               </div>
-              </motion.div>
             </motion.div>
           </motion.div>
         )}
