@@ -128,7 +128,7 @@ export default function ProjectGrid() {
             <span className="text-[10px] font-grotesk font-medium uppercase tracking-[0.5em] block mb-4" style={{ color: "#E9B872" }}>
               {t('projects.label')}
             </span>
-            <h2 className="text-5xl md:text-8xl font-display font-light uppercase tracking-tighter leading-[0.9]">{t('projects.title')}</h2>
+            <h2 className="text-5xl md:text-8xl font-display font-bold uppercase tracking-tighter leading-[0.9]">{t('projects.title')}</h2>
           </div>
           <span className="text-[10px] font-grotesk font-light uppercase tracking-[0.4em] text-white/60">
             <span style={{ color: "#E9B872" }}>01</span> — {projects.length < 10 ? `0${projects.length}` : projects.length}
