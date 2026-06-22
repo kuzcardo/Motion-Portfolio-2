@@ -9,6 +9,18 @@ export default function Navbar() {
   const [isHidden, setIsHidden] = useState(false);
   const [scrollHidden, setScrollHidden] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [active, setActive] = useState("");
+
+  // Highlight the nav link of the section currently in view
+  useEffect(() => {
+    const ids = ["about", "work", "contact"];
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id); }),
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+    ids.forEach((id) => { const el = document.getElementById(id); if (el) obs.observe(el); });
+    return () => obs.disconnect();
+  }, []);
 
   // Timing: Hero subtitle ends around 4.5s. Navbar starts shortly after.
   const NAV_START_DELAY = 4.8;
@@ -150,19 +162,24 @@ export default function Navbar() {
           
           {/* Nav Links with Position Animation */}
           <div className="flex items-center justify-center gap-12 text-[11px] font-light uppercase tracking-[0.4em] overflow-hidden py-1 relative z-10 flex-none">
-            {['about', 'portfolio', 'contact'].map((key, i) => (
-              <motion.a
-                key={key}
-                custom={i}
-                variants={linkVariants}
-                initial="hidden"
-                animate="visible"
-                href={`#${key === 'portfolio' ? 'work' : key}`}
-                className="cursor-grow hover:text-white/50 transition-colors"
-              >
-                {t(`nav.${key}`)}
-              </motion.a>
-            ))}
+            {['about', 'portfolio', 'contact'].map((key, i) => {
+              const sec = key === 'portfolio' ? 'work' : key;
+              const isActive = active === sec;
+              return (
+                <motion.a
+                  key={key}
+                  custom={i}
+                  variants={linkVariants}
+                  initial="hidden"
+                  animate="visible"
+                  href={`#${sec}`}
+                  className="cursor-grow transition-colors"
+                  style={{ color: isActive ? '#E9B872' : undefined, opacity: isActive ? 1 : 0.7 }}
+                >
+                  {t(`nav.${key}`)}
+                </motion.a>
+              );
+            })}
           </div>
 
           {/* Language & Theme Toggle with Bounce */}
