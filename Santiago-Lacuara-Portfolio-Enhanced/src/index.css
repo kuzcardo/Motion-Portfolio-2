@@ -1,0 +1,361 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500&family=Syne:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-grotesk: "Space Grotesk", sans-serif;
+  --font-serif: "Syne", sans-serif;
+  --font-display: "Syne", sans-serif;
+
+  --color-bg-pitch: #050505;
+  --color-accent-white: #ffffff;
+  --color-accent: #E9B872;       /* warm amber/gold */
+  --color-accent-deep: #C8924A;
+}
+
+@layer base {
+  body {
+    @apply bg-bg-pitch text-white font-sans antialiased;
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+    font-weight: 700;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: #050505;
+  }
+}
+
+/* ============================================================
+   NOISE / GRAIN OVERLAY
+   ============================================================ */
+.grain-overlay {
+  position: fixed;
+  /* oversized so the translate animation never exposes the viewport edges */
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grainShift 0.6s steps(2) infinite;
+}
+
+@keyframes grainShift {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-2%, 1%); }
+  100% { transform: translate(1%, -1%); }
+}
+
+/* ============================================================
+   GLASS / GLOW / TEXT EFFECTS
+   ============================================================ */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.8),
+    inset 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+.grid-lines {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 70px 70px;
+}
+
+/* Amber halo — filled disc so the background grid does NOT cross the circle.
+   Only a soft EXTERIOR base glow; the interior glow is removed. */
+.halo-glow {
+  background: radial-gradient(circle, var(--color-bg-pitch) 0%, var(--color-bg-pitch) 72%, transparent 100%);
+  box-shadow: 0 0 55px 4px rgba(233, 184, 114, 0.14);
+  border-color: rgba(233, 184, 114, 0.7) !important;
+}
+
+/* Exterior light that borders the circle and follows the mouse in real time.
+   --mx / --my are updated from JS (percentages). No interior light. */
+.halo-follow {
+  position: absolute;
+  inset: -26px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 245, 225, 1) 0%,
+    rgba(233, 184, 114, 0.95) 6%,
+    rgba(233, 184, 114, 0.22) 16%,
+    transparent 30%
+  );
+  filter: blur(5px) contrast(1.25);
+  -webkit-mask: radial-gradient(circle, transparent 84%, #000 89%, #000 95%, transparent 100%);
+  mask: radial-gradient(circle, transparent 84%, #000 89%, #000 95%, transparent 100%);
+  transition: background 0.08s linear;
+}
+
+/* Typewriter caret */
+.tw-caret {
+  display: inline-block;
+  width: 0.06em;
+  height: 0.9em;
+  margin-left: 0.04em;
+  background: var(--color-accent);
+  animation: caretBlink 0.8s steps(1) infinite;
+}
+@keyframes caretBlink { 50% { opacity: 0; } }
+
+/* Global parallax grid (covers the whole page) — bigger modules */
+.bg-grid-global {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 118px 118px;
+  will-change: background-position;
+}
+body.light-mode .bg-grid-global {
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+}
+
+/* Global drifting orange blobs (whole page) */
+.bg-blobs {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-blobs .gb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(100px);
+  opacity: 0.5;
+  will-change: transform;
+}
+.bg-blobs .gb1 { width: 42vw; height: 42vw; left: -8vw; top: -6vh; background: radial-gradient(circle, rgba(233,184,114,.55), transparent 70%); animation: drift1 30s ease-in-out infinite; }
+.bg-blobs .gb2 { width: 34vw; height: 34vw; right: -6vw; top: 18vh; background: radial-gradient(circle, rgba(217,150,80,.5), transparent 70%); animation: drift2 38s ease-in-out infinite; }
+.bg-blobs .gb3 { width: 38vw; height: 38vw; left: 20vw; bottom: -10vh; background: radial-gradient(circle, rgba(233,184,114,.45), transparent 70%); animation: drift3 34s ease-in-out infinite; }
+.bg-blobs .gb4 { width: 28vw; height: 28vw; right: 15vw; bottom: 5vh; background: radial-gradient(circle, rgba(200,146,74,.5), transparent 70%); animation: drift4 42s ease-in-out infinite; }
+.bg-blobs .gb5 { width: 30vw; height: 30vw; left: 40vw; top: 35vh; background: radial-gradient(circle, rgba(233,184,114,.38), transparent 70%); animation: drift5 46s ease-in-out infinite; }
+@keyframes drift1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30vw,24vh); } }
+@keyframes drift2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-26vw,30vh); } }
+@keyframes drift3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(22vw,-28vh); } }
+@keyframes drift4 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-30vw,-18vh); } }
+@keyframes drift5 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-24vw,20vh); } }
+@media (prefers-reduced-motion: reduce) { .bg-blobs .gb { animation: none !important; } }
+
+.text-shadow-strong {
+  text-shadow: 0 2px 15px rgba(0, 0, 0, 0.9), 0 1px 5px rgba(0, 0, 0, 1);
+}
+
+.metallic-text {
+  background: linear-gradient(135deg, #ffffff 0%, #a1a1a1 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Gold gradient text */
+.gold-text {
+  background: linear-gradient(135deg, #F5D9A8 0%, #E9B872 40%, #C8924A 70%, #F5D9A8 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldShine 6s linear infinite;
+}
+
+@keyframes goldShine {
+  to { background-position: 200% center; }
+}
+
+/* Outline / stroke text */
+.stroke-text {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.35);
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ============================================================
+   ANIMATED MESH BACKGROUND
+   ============================================================ */
+.mesh-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.mesh-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.5;
+  will-change: transform;
+}
+
+.mesh-blob.a {
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, rgba(233, 184, 114, 0.30), transparent 70%);
+  top: -10%;
+  left: -10%;
+  animation: floatA 18s ease-in-out infinite;
+}
+
+.mesh-blob.b {
+  width: 38vw;
+  height: 38vw;
+  background: radial-gradient(circle, rgba(120, 120, 160, 0.22), transparent 70%);
+  bottom: -15%;
+  right: -10%;
+  animation: floatB 22s ease-in-out infinite;
+}
+
+@keyframes floatA {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(15vw, 10vh) scale(1.15); }
+}
+
+@keyframes floatB {
+  0%, 100% { transform: translate(0, 0) scale(1.1); }
+  50% { transform: translate(-12vw, -8vh) scale(0.9); }
+}
+
+/* ============================================================
+   MARQUEE
+   ============================================================ */
+.marquee {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  gap: 0;
+  white-space: nowrap;
+}
+
+.marquee__track {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2rem;
+  min-width: 100%;
+  animation: marqueeScroll 38s linear infinite;
+}
+
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+/* ============================================================
+   LIGHT MODE OVERRIDES
+   ============================================================ */
+body {
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+body.light-mode {
+  background-color: #F4F1EB !important;
+  color: #111111 !important;
+}
+
+body.light-mode .bg-black,
+body.light-mode .bg-bg-pitch {
+  background-color: #F4F1EB !important;
+}
+
+body.light-mode .text-white { color: #111111 !important; }
+body.light-mode .text-white\/90 { color: rgba(0, 0, 0, 0.9) !important; }
+body.light-mode .text-white\/70 { color: rgba(0, 0, 0, 0.7) !important; }
+body.light-mode .text-white\/60 { color: rgba(0, 0, 0, 0.6) !important; }
+body.light-mode .text-white\/50 { color: rgba(0, 0, 0, 0.5) !important; }
+body.light-mode .text-white\/40 { color: rgba(0, 0, 0, 0.4) !important; }
+
+body.light-mode .border-white\/5 { border-color: rgba(0, 0, 0, 0.05) !important; }
+body.light-mode .border-white\/10 { border-color: rgba(0, 0, 0, 0.1) !important; }
+body.light-mode .border-white\/20 { border-color: rgba(0, 0, 0, 0.2) !important; }
+body.light-mode .border-white { border-color: #111111 !important; }
+
+body.light-mode .bg-white { background-color: #111111 !important; }
+body.light-mode .bg-white\/5 { background-color: rgba(0, 0, 0, 0.05) !important; }
+body.light-mode .bg-white\/10 { background-color: rgba(0, 0, 0, 0.1) !important; }
+body.light-mode .bg-white\/20 { background-color: rgba(0, 0, 0, 0.2) !important; }
+body.light-mode .bg-black\/50 { background-color: rgba(255, 255, 255, 0.5) !important; }
+
+body.light-mode .from-black {
+  --tw-gradient-from: #F4F1EB var(--tw-gradient-from-position);
+  --tw-gradient-to: rgba(244, 241, 235, 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+body.light-mode .from-black\/80 {
+  --tw-gradient-from: rgba(244, 241, 235, 0.8) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgba(244, 241, 235, 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+body.light-mode .from-black\/50 {
+  --tw-gradient-from: rgba(244, 241, 235, 0.5) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgba(244, 241, 235, 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+body.light-mode .bg-zinc-900 { background-color: #E8E4DB !important; }
+
+body.light-mode .grid-lines {
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+}
+
+body.light-mode .halo-glow {
+  background: radial-gradient(circle, #F4F1EB 0%, #F4F1EB 72%, transparent 100%);
+  box-shadow: 0 0 55px 4px rgba(200, 146, 74, 0.2);
+  border-color: rgba(200, 146, 74, 0.8) !important;
+}
+
+body.light-mode .text-shadow-strong {
+  text-shadow: 0 2px 15px rgba(255, 255, 255, 0.9), 0 1px 5px rgba(255, 255, 255, 1);
+}
+
+body.light-mode .stroke-text {
+  -webkit-text-stroke: 1px rgba(0, 0, 0, 0.3);
+}
+
+body.light-mode .liquid-glass {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.1),
+    inset 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .hover\:text-white:hover { color: #111111 !important; }
+body.light-mode .hover\:border-white:hover { border-color: #111111 !important; }
+body.light-mode .hover\:text-white\/50:hover { color: rgba(0, 0, 0, 0.5) !important; }
+
+body.light-mode .custom-cursor,
+body.light-mode .cursor-ring {
+  mix-blend-mode: normal;
+}
+body.light-mode .cursor-dot { background: #111; }
+body.light-mode .cursor-ring { border-color: rgba(0,0,0,0.5); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay, .mesh-blob, .gold-text, .marquee__track { animation: none !important; }
+}

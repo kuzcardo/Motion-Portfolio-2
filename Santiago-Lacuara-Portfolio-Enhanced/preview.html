@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Santiago Lacuara — Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Poppins:wght@700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050505; --fg:#ffffff; --accent:#E9B872;
+  --line:rgba(255,255,255,.09);
+  --glass-bg:rgba(255,255,255,.03); --glass-bd:rgba(255,255,255,.1);
+  --soft:rgba(255,255,255,.6); --softer:rgba(255,255,255,.3);
+  --bd10:rgba(255,255,255,.1); --bd20:rgba(255,255,255,.2);
+}
+body.light{
+  --bg:#F4F1EB; --fg:#111111; --accent:#C8924A;
+  --line:rgba(0,0,0,.08);
+  --glass-bg:rgba(0,0,0,.03); --glass-bd:rgba(0,0,0,.1);
+  --soft:rgba(0,0,0,.6); --softer:rgba(0,0,0,.3);
+  --bd10:rgba(0,0,0,.1); --bd20:rgba(0,0,0,.2);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{
+  background:transparent; color:var(--fg);
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  overflow-x:hidden; transition:color .5s ease;
+}
+html{transition:background .5s ease}
+::selection{background:var(--accent); color:#050505}
+a{color:inherit; text-decoration:none}
+.poppins{font-family:"Poppins",sans-serif}
+
+/* GLOBAL PARALLAX GRID (whole page) — bigger modules */
+#bgGrid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(to right,var(--line) 1px,transparent 1px),linear-gradient(to bottom,var(--line) 1px,transparent 1px);
+  background-size:118px 118px;will-change:background-position}
+section,footer,nav{position:relative;z-index:1}
+
+/* GLOBAL DRIFTING ORANGE BLOBS (whole page) */
+#bgBlobs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+#bgBlobs .gb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.5}
+.gb1{width:42vw;height:42vw;left:-8vw;top:-6vh;background:radial-gradient(circle,rgba(233,184,114,.55),transparent 70%);animation:drift1 30s ease-in-out infinite}
+.gb2{width:34vw;height:34vw;right:-6vw;top:18vh;background:radial-gradient(circle,rgba(217,150,80,.5),transparent 70%);animation:drift2 38s ease-in-out infinite}
+.gb3{width:38vw;height:38vw;left:20vw;bottom:-10vh;background:radial-gradient(circle,rgba(233,184,114,.45),transparent 70%);animation:drift3 34s ease-in-out infinite}
+.gb4{width:28vw;height:28vw;right:15vw;bottom:5vh;background:radial-gradient(circle,rgba(200,146,74,.5),transparent 70%);animation:drift4 42s ease-in-out infinite}
+.gb5{width:30vw;height:30vw;left:40vw;top:35vh;background:radial-gradient(circle,rgba(233,184,114,.38),transparent 70%);animation:drift5 46s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(30vw,24vh)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-26vw,30vh)}}
+@keyframes drift3{0%,100%{transform:translate(0,0)}50%{transform:translate(22vw,-28vh)}}
+@keyframes drift4{0%,100%{transform:translate(0,0)}50%{transform:translate(-30vw,-18vh)}}
+@keyframes drift5{0%,100%{transform:translate(0,0)}50%{transform:translate(-24vw,20vh)}}
+
+/* GRAIN */
+.grain{position:fixed;top:-10%;left:-10%;width:120%;height:120%;z-index:200;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain .6s steps(2) infinite}
+@keyframes grain{0%{transform:translate(0,0)}50%{transform:translate(-2%,1%)}100%{transform:translate(1%,-1%)}}
+
+/* MESH */
+.mesh{position:absolute;inset:0;overflow:hidden;z-index:0}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5}
+.blob.a{width:45vw;height:45vw;background:radial-gradient(circle,rgba(233,184,114,.30),transparent 70%);top:-10%;left:-10%;animation:fa 18s ease-in-out infinite}
+.blob.b{width:38vw;height:38vw;background:radial-gradient(circle,rgba(120,120,160,.22),transparent 70%);bottom:-15%;right:-10%;animation:fb 22s ease-in-out infinite}
+@keyframes fa{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(15vw,10vh) scale(1.15)}}
+@keyframes fb{0%,100%{transform:translate(0,0) scale(1.1)}50%{transform:translate(-12vw,-8vh) scale(.9)}}
+
+/* helpers */
+.gold{background:linear-gradient(135deg,#F5D9A8 0%,#E9B872 40%,#C8924A 70%,#F5D9A8 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shine 6s linear infinite}
+@keyframes shine{to{background-position:200% center}}
+.stroke{-webkit-text-stroke:1px var(--bd20);-webkit-text-fill-color:transparent;color:transparent}
+.label{font-size:11px;font-weight:600;letter-spacing:.5em;text-transform:uppercase;color:var(--accent)}
+
+/* NAV — bigger + hide/show on scroll */
+nav{position:fixed;top:28px;left:0;right:0;z-index:100;display:flex;justify-content:center;padding:0 24px;
+  transition:transform .55s cubic-bezier(.22,1,.36,1),opacity .4s ease}
+nav.nav-hidden{transform:translateY(-180%);opacity:0}
+nav.nav-pop{animation:navPop .55s cubic-bezier(.34,1.56,.64,1)}
+@keyframes navPop{0%{transform:translateY(-180%);opacity:0}60%{transform:translateY(6%);opacity:1}100%{transform:translateY(0);opacity:1}}
+.navbar{display:flex;align-items:center;justify-content:space-between;gap:48px;width:100%;max-width:1180px;
+  padding:22px 44px;border-radius:999px;background:var(--glass-bg);backdrop-filter:blur(24px) saturate(160%);
+  border:1px solid var(--glass-bd);box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 0 20px rgba(255,255,255,.05)}
+.brand{font-size:13px;letter-spacing:.3em;text-transform:uppercase;flex:1}
+.navlinks{display:flex;gap:46px;font-size:11px;letter-spacing:.4em;text-transform:uppercase}
+.navlinks a{transition:color .3s}.navlinks a:hover{color:var(--accent)}
+.navtools{flex:1;display:flex;justify-content:flex-end;gap:20px;align-items:center}
+.navtools button{background:none;border:none;color:inherit;cursor:pointer;display:flex;align-items:center}
+.iconbtn{color:var(--soft);font-size:15px}.iconbtn:hover{color:var(--fg)}
+.sep{width:1px;height:16px;background:var(--bd20)}
+.langwrap{display:flex;align-items:center;gap:10px}
+.langwrap .lab{font-size:10px;letter-spacing:.2em;transition:opacity .3s}
+.toggle{position:relative;width:38px;height:20px;background:var(--bd10);border-radius:999px;padding:3px;cursor:pointer;border:none}
+.toggle .knob{width:14px;height:14px;background:var(--fg);border-radius:50%;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+body.es .toggle .knob{transform:translateX(18px)}
+@media(max-width:920px){.navlinks{display:none}.navbar{padding:18px 28px}}
+
+/* HERO */
+.hero{position:relative;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.halo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(460px,80vw);height:min(460px,80vw);border-radius:50%;
+  border:1.5px solid rgba(233,184,114,.7);
+  /* disc fill so the grid does NOT cross the circle; only an outer base glow */
+  background:radial-gradient(circle, var(--bg) 0%, var(--bg) 72%, transparent 100%);
+  box-shadow:0 0 55px 4px rgba(233,184,114,.14);
+  z-index:1;animation:pop 1.5s cubic-bezier(.34,1.56,.64,1) both .2s}
+/* exterior light that borders the circle and follows the cursor */
+.halo-follow{position:absolute;inset:-26px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),
+    rgba(255,245,225,1) 0%, rgba(233,184,114,.95) 6%, rgba(233,184,114,.22) 16%, transparent 30%);
+  filter:blur(5px) contrast(1.25);
+  -webkit-mask:radial-gradient(circle, transparent 84%, #000 89%, #000 95%, transparent 100%);
+  mask:radial-gradient(circle, transparent 84%, #000 89%, #000 95%, transparent 100%);}
+@keyframes pop{from{transform:translate(-50%,-50%) scale(0);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.hero h1{position:relative;z-index:3;font-family:"Syne",sans-serif;font-size:clamp(46px,9.5vw,140px);font-weight:700;text-transform:uppercase;line-height:1;text-align:center;letter-spacing:-.01em}
+.hero h1 .line{display:flex;justify-content:center;align-items:flex-end;min-height:1em}
+.caret{display:inline-block;width:.06em;height:.92em;background:var(--accent);margin-left:.04em;animation:blink .8s steps(1) infinite}
+.caret.off{display:none}
+@keyframes blink{50%{opacity:0}}
+.hero .sub{position:absolute;bottom:46px;left:0;right:0;text-align:center;z-index:3;opacity:0;animation:up .9s cubic-bezier(.22,1,.36,1) forwards 3.2s}
+.hero .sub span{font-size:10px;letter-spacing:.6em;text-transform:uppercase;opacity:.85}
+.hero .sub .bar{width:1px;height:60px;background:var(--fg);margin:18px auto 0}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* MARQUEE */
+.marquee{display:flex;overflow:hidden;white-space:nowrap;padding:42px 0}
+.track{display:flex;gap:34px;align-items:center;flex-shrink:0;animation:scroll 36s linear infinite}
+.track span{font-family:"Syne",sans-serif;font-size:clamp(28px,4vw,54px);font-weight:700;text-transform:uppercase}
+.track .star{color:var(--accent);-webkit-text-fill-color:var(--accent)}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+
+/* ABOUT */
+.about{position:relative;padding:120px 24px;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+@media(max-width:880px){.about{grid-template-columns:1fr;gap:48px;padding:80px 24px}}
+.about .photo{position:relative;width:100%;max-width:380px;aspect-ratio:4/5;margin:0 auto}
+.about .photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(1);border-radius:4px}
+.about .photo .frame{position:absolute;inset:-16px;border:1px solid rgba(233,184,114,.25)}
+.about .photo .c1{position:absolute;top:-16px;left:-16px;width:32px;height:32px;border-top:1px solid var(--accent);border-left:1px solid var(--accent)}
+.about .photo .c2{position:absolute;bottom:-16px;right:-16px;width:32px;height:32px;border-bottom:1px solid var(--accent);border-right:1px solid var(--accent)}
+.about p{color:var(--fg);opacity:.9;line-height:1.7;font-size:15px;margin-top:20px;font-weight:300}
+.about .col{border-left:1px solid var(--bd20);padding-left:24px}
+
+/* PROJECTS */
+.work{position:relative;padding:120px 24px;max-width:1400px;margin:0 auto}
+.work-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:80px;flex-wrap:wrap;gap:16px}
+.work-head h2{font-family:"Syne",sans-serif;font-weight:700;text-transform:uppercase;font-size:clamp(40px,8vw,108px);line-height:.9;margin-top:14px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media(max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.card{position:relative;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:1px solid var(--bd10);background:#111;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.card:hover{transform:translateY(-8px);box-shadow:inset 0 0 0 1px rgba(233,184,114,.6),0 0 0 1px rgba(233,184,114,.4)}
+.card img{width:100%;height:100%;object-fit:cover;filter:grayscale(1);opacity:.5;transform:scale(1.05);transition:all 1s ease}
+.card:hover img{filter:grayscale(0);opacity:1;transform:scale(1)}
+.card .idx{position:absolute;top:18px;left:18px;z-index:2;font-size:10px;letter-spacing:.3em;color:rgba(255,255,255,.75);text-shadow:0 2px 10px #000}
+.card .info{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;
+  background:linear-gradient(to top,rgba(0,0,0,.9),rgba(0,0,0,.1) 50%,transparent);opacity:0;transition:opacity .5s}
+.card:hover .info{opacity:1}
+.card .cat{font-size:10px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.card .info h3{font-family:"Poppins",sans-serif;font-weight:700;text-transform:uppercase;font-size:26px;letter-spacing:-.02em;color:#fff}
+.card .view{margin-top:12px;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+
+/* CONTACT */
+.contact{position:relative;padding:140px 24px;text-align:center;overflow:hidden;border-top:1px solid var(--bd10)}
+.contact h2{font-family:"Syne",sans-serif;font-weight:700;text-transform:uppercase;font-size:clamp(52px,9.5vw,140px);line-height:.9;margin:24px 0 40px}
+.contact .mail{position:relative;z-index:2;font-size:clamp(16px,2.4vw,26px);font-weight:300;border-bottom:1px solid var(--bd20);padding-bottom:8px;display:inline-flex;gap:12px;transition:border-color .3s}
+.contact .mail:hover{border-color:var(--accent)}
+.socials{position:relative;z-index:2;margin-top:64px;display:flex;justify-content:center;gap:32px;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--soft)}
+.socials a:hover{color:var(--fg)}
+.sdot{width:4px;height:4px;border-radius:50%;background:var(--softer);align-self:center}
+
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:50px 24px;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--softer);border-top:1px solid var(--line);text-align:center}
+
+.note{position:fixed;bottom:14px;left:14px;z-index:300;font-size:10px;letter-spacing:.15em;color:var(--accent);background:rgba(0,0,0,.5);padding:6px 12px;border:1px solid rgba(233,184,114,.3);border-radius:999px;backdrop-filter:blur(8px)}
+body.light .note{background:rgba(255,255,255,.6)}
+</style>
+</head>
+<body class="es">
+
+<div id="bgBlobs"><span class="gb gb1"></span><span class="gb gb2"></span><span class="gb gb3"></span><span class="gb gb4"></span><span class="gb gb5"></span></div>
+<div id="bgGrid"></div>
+<div class="grain"></div>
+<div class="note" data-i18n="note">Preview · la versión real es React + Vite</div>
+
+<nav id="nav">
+  <div class="navbar">
+    <div class="brand" data-i18n="brand">Estudio de Motion Graphics</div>
+    <div class="navlinks">
+      <a href="#about" data-i18n="nav.about">Sobre mí</a>
+      <a href="#work" data-i18n="nav.portfolio">Portafolio</a>
+      <a href="#contact" data-i18n="nav.contact">Contacto</a>
+    </div>
+    <div class="navtools">
+      <div class="langwrap">
+        <span class="lab" id="labEN">EN</span>
+        <button class="toggle" id="langBtn" aria-label="Idioma"><span class="knob"></span></button>
+        <span class="lab" id="labES">ES</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="halo"><div class="halo-follow"></div></div>
+  <h1>
+    <span class="line"><span id="l1"></span></span>
+    <span class="line gold"><span id="l2"></span></span>
+  </h1>
+  <div class="sub">
+    <span data-i18n="hero.sub">Diseñador de Motion Graphics</span>
+    <div class="bar"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="track" id="t1"></div>
+  <div class="track" id="t2"></div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="photo">
+    <img src="https://i.ibb.co/1YXbWWRj/retratardo.png" referrerpolicy="no-referrer" alt="Santiago Lacuara">
+    <div class="frame"></div><div class="c1"></div><div class="c2"></div>
+  </div>
+  <div class="col">
+    <div class="label" data-i18n="about.label">Sobre Mí</div>
+    <p data-i18n="about.p1"></p>
+    <p data-i18n="about.p2"></p>
+  </div>
+</section>
+
+<!-- WORK -->
+<section class="work" id="work">
+  <div class="work-head">
+    <div>
+      <div class="label" data-i18n="projects.label">Trabajo Seleccionado</div>
+      <h2 data-i18n="projects.title">Estilos de Diseño</h2>
+    </div>
+    <div style="font-size:10px;letter-spacing:.4em;color:var(--soft)"><span style="color:var(--accent)">01</span> — 07</div>
+  </div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="label" style="position:relative;z-index:2" data-i18n="contact.inquiries">Consultas</div>
+  <h2><span class="gold" data-i18n="contact.title">Ponete en contacto</span></h2>
+  <a class="mail" href="mailto:santiago.lopezlacuara@gmail.com">santiago.lopezlacuara@gmail.com <span>→</span></a>
+  <div class="socials">
+    <a href="#">YouTube</a><span class="sdot"></span>
+    <a href="#">Instagram</a><span class="sdot"></span>
+    <a href="#">LinkedIn</a>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Santiago Lacuara</span>
+  <span style="color:var(--accent)">Motion Graphics</span>
+  <span data-i18n="footer.rights">Todos los derechos reservados</span>
+</footer>
+
+<script>
+/* ---------- i18n ---------- */
+const I18N={
+  es:{
+    "note":"Preview · la versión real es React + Vite",
+    "brand":"Estudio de Motion Graphics",
+    "nav.about":"Sobre mí","nav.portfolio":"Portafolio","nav.contact":"Contacto",
+    "hero.sub":"Diseñador de Motion Graphics",
+    "about.label":"Sobre Mí",
+    "about.p1":"Soy un Diseñador de Motion Graphics con 3 años de experiencia dedicado a dar vida a ideas estáticas a través de narrativas dinámicas. Mi experiencia abarca 8 estilos de movimiento distintos, lo que me permite adaptarme a las necesidades de cualquier proyecto.",
+    "about.p2":"Me especializo en crear de todo, desde narrativas minimalistas hasta complejas animaciones de logotipos y fondos dinámicos, combinando precisión técnica con talento creativo para que cada fotograma tenga un propósito.",
+    "projects.label":"Trabajo Seleccionado","projects.title":"Estilos de Diseño",
+    "contact.inquiries":"Consultas","contact.title":"Ponete en contacto",
+    "footer.rights":"Todos los derechos reservados","view":"Ver Reel"
+  },
+  en:{
+    "note":"Preview · the real version is React + Vite",
+    "brand":"Motion Graphics Studio",
+    "nav.about":"About","nav.portfolio":"Portfolio","nav.contact":"Contact",
+    "hero.sub":"Motion Graphics Designer",
+    "about.label":"About Me",
+    "about.p1":"I am a Motion Graphic Designer with 3 years of experience dedicated to bringing static ideas to life through dynamic storytelling. My expertise spans 8 distinct motion styles, allowing me to adapt to any project's needs.",
+    "about.p2":"I specialize in creating everything from minimalist narratives to complex logo animations and dynamic backgrounds, blending technical precision with creative flair so every frame serves a purpose.",
+    "projects.label":"Selected Work","projects.title":"Design Styles",
+    "contact.inquiries":"Inquiries","contact.title":"Get In Touch",
+    "footer.rights":"All Rights Reserved","view":"View Reel"
+  }
+};
+let lang="es";
+const CAT_ES={Animation:"Animación",Typography:"Tipografía",Style:"Estilo",Content:"Contenido",Branding:"Marca",Interface:"Interfaz",Generative:"Generativo"};
+const catLabel=(c)=> (lang==="es" && CAT_ES[c]) ? CAT_ES[c] : c;
+const titleLabel=(t)=> (lang==="es" && t==="Minimalist") ? "Minimalista" : t;
+function applyLang(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k=el.getAttribute("data-i18n");
+    if(I18N[lang][k]!==undefined) el.textContent=I18N[lang][k];
+  });
+  renderGrid();
+  document.getElementById("labEN").style.opacity=lang==="en"?1:.3;
+  document.getElementById("labES").style.opacity=lang==="es"?1:.3;
+  document.documentElement.lang=lang;
+}
+
+/* ---------- projects ---------- */
+const projects=[
+  {t:"Motion Narrative",c:"Animation",i:"public/motion-narrative.png"},
+  {t:"Kinetic Typography",c:"Typography",i:"https://i.ibb.co/S7KZzZ3K/ee.jpg"},
+  {t:"Minimalist",c:"Style",i:"https://i.ibb.co/hxks1nmf/fddd.jpg"},
+  {t:"Social Media",c:"Content",i:"public/social-media.png"},
+  {t:"Logo Animation",c:"Branding",i:"public/logo-animation.png"},
+  {t:"UX / UI",c:"Interface",i:"public/ux-ui.png"},
+  {t:"Dynamic Backgrounds",c:"Generative",i:"https://i.ibb.co/G4WtH9Vz/image.jpg"},
+];
+function renderGrid(){
+  document.getElementById('grid').innerHTML=projects.map((p,n)=>`
+  <div class="card">
+    <img src="${p.i}" referrerpolicy="no-referrer" alt="${p.t}">
+    <span class="idx">0${n+1}</span>
+    <div class="info"><span class="cat">${catLabel(p.c)}</span><h3>${titleLabel(p.t)}</h3><span class="view">${I18N[lang].view} →</span></div>
+  </div>`).join('');
+}
+
+/* ---------- marquee: design style names only ---------- */
+const styles=["Motion Narrative","Kinetic Typography","Minimalist","Social Media","Logo Animation","UX / UI","Dynamic Backgrounds"];
+const row=[...styles,...styles].map(x=>`<span class="stroke">${x}</span><span class="star">✦</span>`).join('');
+document.getElementById('t1').innerHTML=row;
+document.getElementById('t2').innerHTML=row;
+
+/* ---------- toggles ---------- */
+document.getElementById("langBtn").addEventListener("click",()=>{
+  lang=lang==="es"?"en":"es";
+  document.body.classList.toggle("es",lang==="es");
+  applyLang();
+});
+/* ---------- typewriter title (no caret, slower) ---------- */
+const l1=document.getElementById("l1"),l2=document.getElementById("l2");
+function type(el,text,speed,done){
+  let i=0;(function tick(){ if(i<=text.length){el.textContent=text.slice(0,i);i++;setTimeout(tick,speed);}else if(done)done(); })();
+}
+setTimeout(()=>{
+  type(l1,"Santiago",125,()=>{
+    setTimeout(()=>type(l2,"Lacuara",125),160);
+  });
+},400);
+
+/* ---------- parallax grid ---------- */
+const bgGrid=document.getElementById("bgGrid");
+/* ---------- navbar hide on scroll down / pop on scroll up ---------- */
+const nav=document.getElementById("nav");
+let lastY=window.scrollY, ticking=false;
+function onScroll(){
+  const y=window.scrollY;
+  // parallax: grid drifts slower than the page
+  bgGrid.style.backgroundPositionY=(-y*0.45)+"px";
+  // navbar direction
+  if(y>lastY && y>140){ // scrolling down
+    nav.classList.add("nav-hidden"); nav.classList.remove("nav-pop");
+  }else if(y<lastY){ // scrolling up
+    if(nav.classList.contains("nav-hidden")){
+      nav.classList.remove("nav-hidden");
+      nav.classList.add("nav-pop");
+      setTimeout(()=>nav.classList.remove("nav-pop"),600);
+    }
+  }
+  lastY=y; ticking=false;
+}
+window.addEventListener("scroll",()=>{ if(!ticking){requestAnimationFrame(onScroll);ticking=true;} },{passive:true});
+
+/* ---------- interactive EXTERIOR halo light (follows mouse) ---------- */
+const follows=document.querySelectorAll(".halo-follow");
+let raf=0;
+window.addEventListener("mousemove",e=>{
+  cancelAnimationFrame(raf);
+  raf=requestAnimationFrame(()=>{
+    follows.forEach(el=>{
+      const r=el.getBoundingClientRect(); if(!r.width)return;
+      el.style.setProperty("--mx",((e.clientX-r.left)/r.width*100)+"%");
+      el.style.setProperty("--my",((e.clientY-r.top)/r.height*100)+"%");
+    });
+  });
+});
+
+applyLang();
+</script>
+</body>
+</html>
