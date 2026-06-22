@@ -102,17 +102,33 @@ export default function ProjectGrid() {
     }
   }, [selectedProject]);
 
+  // On mobile (no hover), illuminate the card closest to the viewport center
+  // as the user scrolls — the cards "light up" on their own while swiping.
+  useEffect(() => {
+    if (!isMobile) { setActiveProjectId(null); return; }
+    let raf = 0;
+    const update = () => {
+      const cards = document.querySelectorAll<HTMLElement>('[data-card-id]');
+      const center = window.innerHeight / 2;
+      let bestId: number | null = null;
+      let bestDist = Infinity;
+      cards.forEach((c) => {
+        const r = c.getBoundingClientRect();
+        const cy = r.top + r.height / 2;
+        const d = Math.abs(cy - center);
+        if (d < bestDist) { bestDist = d; bestId = Number(c.getAttribute('data-card-id')); }
+      });
+      // only light it up when a card is genuinely near the middle of the screen
+      setActiveProjectId(bestDist < window.innerHeight * 0.45 ? bestId : null);
+    };
+    const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
+  }, [isMobile]);
+
   const handleProjectClick = (project: Project) => {
-    if (isMobile) {
-      if (activeProjectId === project.id) {
-        setSelectedProject(project);
-        setActiveProjectId(null);
-      } else {
-        setActiveProjectId(project.id);
-      }
-    } else {
-      setSelectedProject(project);
-    }
+    setSelectedProject(project);
   };
 
   return (
@@ -145,6 +161,7 @@ export default function ProjectGrid() {
               transition={{ delay: (index % 4) * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -8 }}
               onClick={() => handleProjectClick(project)}
+              data-card-id={project.id}
               className="cursor-grow group relative aspect-[3/4] overflow-hidden bg-zinc-900 cursor-pointer rounded-2xl border border-white/5"
             >
               <img
