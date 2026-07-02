@@ -59,7 +59,7 @@ const projects: Project[] = [
     title: "Dynamic Backgrounds",
     category: "Generative",
     image: "https://i.ibb.co/G4WtH9Vz/image.jpg",
-    videos: ["2_jLrn3C_rk", "PFzDJlHQ35o", "YIgjFZhLYd0", "OJUA6cSnMI8"]
+    videos: ["2_jLrn3C_rk", "PFzDJlHQ35o", "YIgjFZhLYd0", "OJUA6cSnMI8", "iWsnjFEJu0"]
   }
 ];
 
