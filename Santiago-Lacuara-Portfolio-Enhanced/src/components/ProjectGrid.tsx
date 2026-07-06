@@ -17,7 +17,7 @@ const projects: Project[] = [
     title: "Motion Narrative",
     category: "Animation",
     image: "/motion-narrative.png",
-    videos: ["Sq8HyEhXAYM", "ZFhZstN-gV0", "rYUx7LVM_iw","OWBxX_Mj8Xk"]
+    videos: ["Sq8HyEhXAYM", "ZFhZstN-gV0", "rYUx7LVM_iw","zCoocLg2LBI"]
   },
   {
     id: 2,
