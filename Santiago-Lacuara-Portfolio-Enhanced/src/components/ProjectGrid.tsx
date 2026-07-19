@@ -17,7 +17,7 @@ const projects: Project[] = [
     title: "Motion Narrative",
     category: "Animation",
     image: "/motion-narrative.png",
-    videos: ["Sq8HyEhXAYM", "ZFhZstN-gV0", "rYUx7LVM_iw","6-GJIqHH7wg"]
+    videos: ["Sq8HyEhXAYM", "ZFhZstN-gV0", "rYUx7LVM_iw","6-GJIqHH7wg", "zYzLro-d5jo"]
   },
   {
     id: 2,
@@ -52,7 +52,7 @@ const projects: Project[] = [
     title: "UX UI",
     category: "Interface",
     image: "/ux-ui.png",
-    videos: ["09rOZHMihbc", "ajPRSX3PAgk", "vxdvbLCZn5U", "8N2LEo9ysXc", "F40p_FA9BnU", "x4VkU7qg_LQ"]
+    videos: ["09rOZHMihbc", "ajPRSX3PAgk", "vxdvbLCZn5U", "8N2LEo9ysXc", "F40p_FA9BnU", "x4VkU7qg_LQ", "zYzLro-d5jo"]
   },
   {
     id: 8,
@@ -231,7 +231,7 @@ export default function ProjectGrid() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {selectedProject.videos?.map((videoId, idx) => {
-                  const isHorizontal = ['gKfQuRYIzS0', '2_jLrn3C_rk', 'Ua3sqZmoKrQ', 'vxdvbLCZn5U', '8N2LEo9ysXc', 'eOTPjy-Fow8', 'PpMRNkPnA6o', 'F40p_FA9BnU', "NTON1b1vmeI"].includes(videoId);
+                  const isHorizontal = ['gKfQuRYIzS0', '2_jLrn3C_rk', 'Ua3sqZmoKrQ', 'vxdvbLCZn5U', '8N2LEo9ysXc', 'eOTPjy-Fow8', 'PpMRNkPnA6o', 'F40p_FA9BnU', "NTON1b1vmeI", "zYzLro-d5jo"].includes(videoId);
                   return (
                     <div 
                       key={idx} 
