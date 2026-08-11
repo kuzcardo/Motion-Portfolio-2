@@ -45,7 +45,7 @@ const projects: Project[] = [
     title: "Logo animation",
     category: "Branding",
     image: "/logo-animation.png",
-    videos: ["YOyoXkFTp50", "gKfQuRYIzS0", "36Zd44weTmA", "4YD__Ie-ghY", "Ua3sqZmoKrQ", "eOTPjy-Fow8", " rZVFAHm61UM" ]
+    videos: ["YOyoXkFTp50", "gKfQuRYIzS0", "36Zd44weTmA", "4YD__Ie-ghY", "Ua3sqZmoKrQ", "eOTPjy-Fow8", " rZVFAHm61UM","DOMCyp-lHq0" ]
   },
   {
     id: 7,
