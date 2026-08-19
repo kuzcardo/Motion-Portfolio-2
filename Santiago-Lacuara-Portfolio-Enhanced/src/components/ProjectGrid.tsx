@@ -59,7 +59,7 @@ const projects: Project[] = [
     title: "Dynamic Backgrounds",
     category: "Generative",
     image: "https://i.ibb.co/G4WtH9Vz/image.jpg",
-    videos: ["2_jLrn3C_rk", "PFzDJlHQ35o", "YIgjFZhLYd0", "OJUA6cSnMI8", "-iWsnjFEJu0"]
+    videos: ["2_jLrn3C_rk", "PFzDJlHQ35o", "YIgjFZhLYd0", "OJUA6cSnMI8", "-iWsnjFEJu0", "k2wqBYzhlfs"]
   }
 ];
 
@@ -231,7 +231,7 @@ export default function ProjectGrid() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {selectedProject.videos?.map((videoId, idx) => {
-                  const isHorizontal = ['gKfQuRYIzS0', '2_jLrn3C_rk', 'Ua3sqZmoKrQ', 'vxdvbLCZn5U', '8N2LEo9ysXc', 'eOTPjy-Fow8', 'PpMRNkPnA6o', 'F40p_FA9BnU', "NTON1b1vmeI", "zYzLro-d5jo"].includes(videoId);
+                  const isHorizontal = ['gKfQuRYIzS0', '2_jLrn3C_rk', 'Ua3sqZmoKrQ', 'vxdvbLCZn5U', '8N2LEo9ysXc', 'eOTPjy-Fow8', 'PpMRNkPnA6o', 'F40p_FA9BnU', "NTON1b1vmeI", "zYzLro-d5jo","k2wqBYzhlfs"].includes(videoId);
                   return (
                     <div 
                       key={idx} 
