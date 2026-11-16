@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import Timeline from "./Timeline";
+import AboutPhoto from "./AboutPhoto";
 
 export default function HeroAboutSection() {
   const { t } = useLanguage();
@@ -107,28 +108,8 @@ export default function HeroAboutSection() {
       {/* ===================== ABOUT ===================== */}
       <section id="about" className="relative py-24 md:py-40 px-6 md:px-12 overflow-hidden">
         <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
-          {/* Photo */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full max-w-[300px] md:max-w-md aspect-[4/5] relative mx-auto md:mx-0"
-          >
-            <div className="relative w-full h-full overflow-hidden rounded-sm">
-              <img
-                src="https://i.ibb.co/1YXbWWRj/retratardo.png"
-                alt="Santiago Lacuara"
-                className="w-full h-full object-cover grayscale"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 pointer-events-none" />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent z-10 pointer-events-none" />
-            </div>
-            <div className="absolute -inset-4 border z-0 pointer-events-none" style={{ borderColor: "rgba(233,184,114,0.25)" }} />
-            <div className="absolute -top-4 -left-4 w-8 h-8 border-t border-l z-0 pointer-events-none" style={{ borderColor: "#E9B872" }} />
-            <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b border-r z-0 pointer-events-none" style={{ borderColor: "#E9B872" }} />
-          </motion.div>
+          {/* Photo — cursor shape-layer reveal */}
+          <AboutPhoto />
 
           {/* Text */}
           <motion.div

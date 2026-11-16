@@ -34,7 +34,7 @@ const translations: Record<Language, Record<string, string>> = {
     'projects.soon': 'Coming soon',
     'timeline.label': 'Career',
     'timeline.title': 'Experience',
-    'timeline.education': 'Education'
+    'timeline.now': 'Now'
   },
   es: {
     'nav.brand': 'Estudio de Motion Graphics',
@@ -61,7 +61,7 @@ const translations: Record<Language, Record<string, string>> = {
     'projects.soon': 'Próximamente',
     'timeline.label': 'Trayectoria',
     'timeline.title': 'Experiencia',
-    'timeline.education': 'Estudios'
+    'timeline.now': 'Actual'
   }
 };
 

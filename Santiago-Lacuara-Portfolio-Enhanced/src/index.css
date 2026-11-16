@@ -397,17 +397,58 @@ body.light-mode .card-cover {
 /* ============================================================
    CAREER TIMELINE
    ============================================================ */
-.timeline-line { background: rgba(255, 255, 255, 0.12); }
-.timeline-line__fill { background: linear-gradient(to bottom, #E9B872, #C8924A); }
+/* dashed track with "marching" dashes */
+.tl-track {
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.22) 50%, transparent 50%);
+  background-size: 2px 12px;
+  animation: tlMarch 1.2s linear infinite;
+}
+@keyframes tlMarch { to { background-position: 0 12px; } }
+/* solid amber trail left behind the plane */
+.tl-trail {
+  background-image: linear-gradient(to bottom, #E9B872 60%, transparent 60%);
+  background-size: 2px 12px;
+  filter: drop-shadow(0 0 6px rgba(233, 184, 114, 0.6));
+}
+.tl-plane {
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 9999px;
+  color: #050505;
+  background: #E9B872;
+  box-shadow: 0 0 0 6px rgba(233, 184, 114, 0.15), 0 0 24px rgba(233, 184, 114, 0.55);
+}
+.tl-connector {
+  height: 0;
+  border-top: 1.5px dashed rgba(233, 184, 114, 0.45);
+}
+.tl-card {
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.02);
+  transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tl-card:hover {
+  border-color: rgba(233, 184, 114, 0.6);
+  background: rgba(233, 184, 114, 0.05);
+  transform: translateY(-3px);
+}
+.tl-ticket {
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+}
+.tl-ticket__dash { width: 48px; border-top: 1.5px dashed #E9B872; }
 .timeline-dot { background: #050505; border: 1.5px solid #E9B872; }
-.timeline-dot.is-current { background: #E9B872; box-shadow: 0 0 0 0 rgba(233, 184, 114, 0.6); animation: dotPulse 2.2s ease-out infinite; }
+.timeline-dot.is-current { background: #E9B872; animation: dotPulse 2.2s ease-out infinite; }
 @keyframes dotPulse {
   0% { box-shadow: 0 0 0 0 rgba(233, 184, 114, 0.55); }
   100% { box-shadow: 0 0 0 12px rgba(233, 184, 114, 0); }
 }
-body.light-mode .timeline-line { background: rgba(0, 0, 0, 0.12); }
+body.light-mode .tl-track { background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.22) 50%, transparent 50%); }
+body.light-mode .tl-card { border-color: rgba(0, 0, 0, 0.18); background: rgba(0, 0, 0, 0.02); }
+body.light-mode .tl-ticket { border-color: rgba(0, 0, 0, 0.25); }
 body.light-mode .timeline-dot { background: #F4F1EB; }
 body.light-mode .timeline-dot.is-current { background: #C8924A; }
+
 @media (prefers-reduced-motion: reduce) {
-  .timeline-dot.is-current { animation: none; }
+  .timeline-dot.is-current, .tl-track { animation: none; }
 }
