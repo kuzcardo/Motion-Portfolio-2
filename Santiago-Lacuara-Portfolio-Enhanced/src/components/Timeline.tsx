@@ -12,28 +12,12 @@ interface Entry {
   current?: boolean;
 }
 
-// Career data — from CV 2026, in the order Santiago wants it shown.
+// Career data — from CV 2026. Oldest first, ending at the present.
 const entries: Entry[] = [
   {
-    role: { en: "Motion Graphics Designer & Video Editor", es: "Motion Graphics Designer y Editor de Video" },
-    company: "Sea Island Creative",
-    period: { en: "Mar 2026 — Present", es: "Mar 2026 — Actualidad" },
-    current: true,
-  },
-  {
-    role: { en: "Multimedia Content Creator", es: "Creador de Contenido Multimedia" },
-    company: "Addnice",
-    period: { en: "Aug 2026 — Oct 2026", es: "Ago 2026 — Oct 2026" },
-  },
-  {
-    role: { en: "Motion Graphics Designer", es: "Motion Graphics Designer" },
-    company: "Vext Labs",
-    period: { en: "2025 — Sep 2026", es: "2025 — Sep 2026" },
-  },
-  {
-    role: { en: "Freelance Motion Designer", es: "Motion Designer Freelance" },
-    company: "Freelance",
-    period: { en: "Mar 2023 — Present", es: "Mar 2023 — Actualidad" },
+    role: { en: "Graphic Designer", es: "Diseñador Gráfico" },
+    company: "Malloys Bar",
+    period: { en: "2022 — 2024", es: "2022 — 2024" },
   },
   {
     role: { en: "Graphic Designer", es: "Diseñador Gráfico" },
@@ -41,9 +25,25 @@ const entries: Entry[] = [
     period: { en: "2023 — 2025", es: "2023 — 2025" },
   },
   {
-    role: { en: "Graphic Designer", es: "Diseñador Gráfico" },
-    company: "Malloys Bar",
-    period: { en: "2022 — 2024", es: "2022 — 2024" },
+    role: { en: "Freelance Motion Designer", es: "Motion Designer Freelance" },
+    company: "Freelance",
+    period: { en: "Mar 2023 — Present", es: "Mar 2023 — Actualidad" },
+  },
+  {
+    role: { en: "Motion Graphics Designer", es: "Motion Graphics Designer" },
+    company: "Vext Labs",
+    period: { en: "2025 — Sep 2026", es: "2025 — Sep 2026" },
+  },
+  {
+    role: { en: "Multimedia Content Creator", es: "Creador de Contenido Multimedia" },
+    company: "Addnice",
+    period: { en: "Aug 2026 — Oct 2026", es: "Ago 2026 — Oct 2026" },
+  },
+  {
+    role: { en: "Motion Graphics Designer & Video Editor", es: "Motion Graphics Designer y Editor de Video" },
+    company: "Sea Island Creative",
+    period: { en: "Mar 2026 — Present", es: "Mar 2026 — Actualidad" },
+    current: true
   },
 ];
 
@@ -130,7 +130,7 @@ export default function Timeline() {
                 <div className={`tl-card relative p-5 md:p-6 rounded-2xl ${right ? "md:col-start-2" : "md:col-start-1 md:text-right"}`}>
                   <span className="absolute top-3 text-[9px] font-grotesk tracking-[0.3em] text-white/40 hidden md:block"
                     style={right ? { right: 16 } : { left: 16 }}>
-                    {String(entries.length - i).padStart(2, "0")}
+                    {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="text-[10px] font-grotesk font-medium uppercase tracking-[0.35em] block mb-2" style={{ color: "#E9B872" }}>
                     {e.period[lang]}
