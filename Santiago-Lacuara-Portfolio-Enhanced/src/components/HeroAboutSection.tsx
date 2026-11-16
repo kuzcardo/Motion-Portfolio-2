@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { useLanguage } from "../context/LanguageContext";
+import Timeline from "./Timeline";
 
 export default function HeroAboutSection() {
   const { t } = useLanguage();
@@ -144,6 +145,9 @@ export default function HeroAboutSection() {
             </div>
           </motion.div>
         </div>
+
+        {/* Career timeline */}
+        <Timeline />
 
         {/* Background decorative text */}
         <div className="absolute top-1/2 left-0 -translate-y-1/2 text-[26vw] md:text-[20vw] font-sans font-black pointer-events-none select-none uppercase z-0 opacity-[0.02] whitespace-nowrap">

@@ -7,7 +7,7 @@ interface Project {
   id: number;
   title: string;
   category: string;
-  image: string;
+  image?: string; // optional: cards without an image show a typographic cover
   videos?: string[]; // YouTube video IDs
 }
 
@@ -38,7 +38,7 @@ const projects: Project[] = [
     title: "Social Media",
     category: "Content",
     image: "/social-media.png",
-    videos: ["3BxmxXZetrQ", "LoIoU1KINDY", "WhpoBDGP3Nc", "20b8lFZ3I9c", "_vw2Ws0V5k8", "ScWMtJoviDk", "sgKGJz_Nrbw", "YrATij0ilZY", "F40p_FA9BnU", "x4VkU7qg_LQ", "bBcI5DwbNrw", "s0AvuRQP16M","c8RDT3T0qNY","rmQQdkXtuTE","ZsfVYNSwr4A","LfhWfHBPOMU","A8VsAxeQFkI","U6O9YYA4-3c?"]
+    videos: ["3BxmxXZetrQ", "LoIoU1KINDY", "WhpoBDGP3Nc", "20b8lFZ3I9c", "_vw2Ws0V5k8", "ScWMtJoviDk", "sgKGJz_Nrbw", "YrATij0ilZY", "F40p_FA9BnU", "x4VkU7qg_LQ", "bBcI5DwbNrw", "s0AvuRQP16M","c8RDT3T0qNY","rmQQdkXtuTE","ZsfVYNSwr4A","LfhWfHBPOMU","A8VsAxeQFkI","U6O9YYA4-3c"]
   },
   {
     id: 6,
@@ -59,15 +59,37 @@ const projects: Project[] = [
     title: "Dynamic Backgrounds",
     category: "Generative",
     image: "https://i.ibb.co/G4WtH9Vz/image.jpg",
-    videos: ["2_jLrn3C_rk", "PFzDJlHQ35o", "YIgjFZhLYd0", "OJUA6cSnMI8", "-iWsnjFEJu0", "k2wqBYzhlfs", "3AkLAKfi98I?"]
+    videos: ["2_jLrn3C_rk", "PFzDJlHQ35o", "YIgjFZhLYd0", "OJUA6cSnMI8", "-iWsnjFEJu0", "k2wqBYzhlfs", "3AkLAKfi98I"]
+  },
+  {
+    id: 9,
+    title: "Long Form",
+    category: "Video Editing",
+    // TODO: add a cover image + YouTube IDs. Long videos are 16:9 by default.
+    videos: []
+  },
+  {
+    id: 10,
+    title: "AI Gen",
+    category: "AI Video",
+    // TODO: add a cover image + YouTube IDs. Add horizontal ones to the isHorizontal list.
+    videos: []
   }
 ];
+
+// Projects whose videos are all horizontal (16:9) unless listed otherwise
+const horizontalByDefault = new Set<number>([9]);
 
 export default function ProjectGrid() {
   const { t, language } = useLanguage();
   // Bilingual project titles (only the ones that differ per language)
+  const titleES: Record<string, string> = {
+    Minimalist: "Minimalista",
+    "Long Form": "Formato Largo",
+    "AI Gen": "Generado con IA",
+  };
   const projTitle = (title: string) =>
-    language === "es" && title === "Minimalist" ? "Minimalista" : title;
+    language === "es" ? titleES[title] || title : title;
   // Bilingual category labels
   const catES: Record<string, string> = {
     Animation: "Animación",
@@ -77,6 +99,8 @@ export default function ProjectGrid() {
     Branding: "Marca",
     Interface: "Interfaz",
     Generative: "Generativo",
+    "Video Editing": "Edición de Video",
+    "AI Video": "Video con IA",
   };
   const projCat = (cat: string) => (language === "es" ? catES[cat] || cat : cat);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -164,19 +188,31 @@ export default function ProjectGrid() {
               data-card-id={project.id}
               className="cursor-grow group relative aspect-[3/4] overflow-hidden bg-zinc-900 cursor-pointer rounded-2xl border border-white/5"
             >
-              <img
-                src={project.image}
-                alt={project.title}
-                className={`w-full h-full object-cover grayscale transition-all duration-1000 ease-out scale-105
+              {project.image ? (
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className={`w-full h-full object-cover grayscale transition-all duration-1000 ease-out scale-105
+                    ${isMobile
+                      ? (activeProjectId === project.id ? 'grayscale-0 opacity-100 scale-100' : 'opacity-50')
+                      : 'opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-100'}`}
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                // Typographic cover for cards that don't have an image yet
+                <div className={`absolute inset-0 card-cover transition-all duration-1000 ease-out
                   ${isMobile
-                    ? (activeProjectId === project.id ? 'grayscale-0 opacity-100 scale-100' : 'opacity-50')
-                    : 'opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-100'}`}
-                referrerPolicy="no-referrer"
-              />
+                    ? (activeProjectId === project.id ? 'is-active' : '')
+                    : ''}`}>
+                  <span className="card-cover__word font-display font-bold uppercase tracking-tighter">
+                    {project.title === "AI Gen" ? "AI" : "16:9"}
+                  </span>
+                </div>
+              )}
 
               {/* Index number always visible */}
               <span className="absolute top-5 left-5 z-20 text-[10px] font-grotesk font-medium tracking-[0.3em] text-white/70 text-shadow-strong">
-                0{index + 1}
+                {String(index + 1).padStart(2, "0")}
               </span>
 
               <div className={`absolute inset-0 p-7 md:p-9 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent transition-opacity duration-500
@@ -230,8 +266,13 @@ export default function ProjectGrid() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {!selectedProject.videos?.length && (
+                  <div className="col-span-full py-16 text-center text-[10px] font-grotesk uppercase tracking-[0.4em] text-white/50">
+                    {t('projects.soon')}
+                  </div>
+                )}
                 {selectedProject.videos?.map((videoId, idx) => {
-                  const isHorizontal = ['gKfQuRYIzS0', '2_jLrn3C_rk', 'Ua3sqZmoKrQ', 'vxdvbLCZn5U', '8N2LEo9ysXc', 'eOTPjy-Fow8', 'PpMRNkPnA6o', 'F40p_FA9BnU', "NTON1b1vmeI", "zYzLro-d5jo","k2wqBYzhlfs","ZsfVYNSwr4A","LfhWfHBPOMU","A8VsAxeQFkI"].includes(videoId);
+                  const isHorizontal = horizontalByDefault.has(selectedProject.id) || ['gKfQuRYIzS0', '2_jLrn3C_rk', 'Ua3sqZmoKrQ', 'vxdvbLCZn5U', '8N2LEo9ysXc', 'eOTPjy-Fow8', 'PpMRNkPnA6o', 'F40p_FA9BnU', "NTON1b1vmeI", "zYzLro-d5jo","k2wqBYzhlfs","ZsfVYNSwr4A","LfhWfHBPOMU","A8VsAxeQFkI"].includes(videoId);
                   return (
                     <div 
                       key={idx} 

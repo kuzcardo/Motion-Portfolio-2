@@ -359,3 +359,55 @@ body.light-mode .cursor-ring { border-color: rgba(0,0,0,0.5); }
 @media (prefers-reduced-motion: reduce) {
   .grain-overlay, .mesh-blob, .gold-text, .marquee__track { animation: none !important; }
 }
+
+/* ============================================================
+   TYPOGRAPHIC CARD COVER (cards without an image yet)
+   ============================================================ */
+.card-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  container-type: inline-size;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(233, 184, 114, 0.18), transparent 60%),
+    radial-gradient(circle at 80% 90%, rgba(200, 146, 74, 0.12), transparent 55%),
+    #0d0d0d;
+}
+.card-cover__word {
+  font-size: 34cqw;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(233, 184, 114, 0.35);
+  transition: color 0.8s ease, -webkit-text-stroke-color 0.8s ease, transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: scale(1.05);
+}
+.group:hover .card-cover__word,
+.card-cover.is-active .card-cover__word {
+  color: rgba(233, 184, 114, 0.9);
+  -webkit-text-stroke-color: transparent;
+  transform: scale(1);
+}
+body.light-mode .card-cover {
+  background:
+    radial-gradient(circle at 30% 20%, rgba(200, 146, 74, 0.2), transparent 60%),
+    #E8E4DB;
+}
+
+/* ============================================================
+   CAREER TIMELINE
+   ============================================================ */
+.timeline-line { background: rgba(255, 255, 255, 0.12); }
+.timeline-line__fill { background: linear-gradient(to bottom, #E9B872, #C8924A); }
+.timeline-dot { background: #050505; border: 1.5px solid #E9B872; }
+.timeline-dot.is-current { background: #E9B872; box-shadow: 0 0 0 0 rgba(233, 184, 114, 0.6); animation: dotPulse 2.2s ease-out infinite; }
+@keyframes dotPulse {
+  0% { box-shadow: 0 0 0 0 rgba(233, 184, 114, 0.55); }
+  100% { box-shadow: 0 0 0 12px rgba(233, 184, 114, 0); }
+}
+body.light-mode .timeline-line { background: rgba(0, 0, 0, 0.12); }
+body.light-mode .timeline-dot { background: #F4F1EB; }
+body.light-mode .timeline-dot.is-current { background: #C8924A; }
+@media (prefers-reduced-motion: reduce) {
+  .timeline-dot.is-current { animation: none; }
+}

@@ -17,8 +17,8 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.contact': 'Contact',
     'hero.subtitle': 'MOTION GRAPHICS DESIGNER',
     'about.label': 'About Me',
-    'about.p1': 'I am a Motion Graphic Designer with 3 years of experience dedicated to bringing static ideas to life through dynamic storytelling. My expertise spans 8 distinct motion styles, allowing me to adapt to any project\'s needs—from high-impact commercials and social media content to intricate UX/UI animations and kinetic typography.',
-    'about.p2': 'I specialize in creating everything from minimalist "Dan Koe style" narratives to complex logo animations and dynamic backgrounds. My focus is always on blending technical precision with creative flair to ensure every frame serves a purpose. I’m constantly exploring new visual languages to keep my work at the forefront of industry trends.',
+    'about.p1': 'I am a Motion Graphic Designer with 4 years of experience dedicated to bringing static ideas to life through dynamic storytelling. My expertise spans 8 distinct motion styles, allowing me to adapt to any project\'s needs—from high-impact commercials and social media content to intricate UX/UI animations and kinetic typography.',
+    'about.p2': 'I specialize in creating everything from minimalist "Dan Koe style" narratives to complex logo animations and dynamic backgrounds. My focus is always on blending technical precision with creative flair to ensure every frame serves a purpose. I’m constantly exploring new visual languages to keep my work at the forefront of industry trends — today that includes AI video generation, which I combine with traditional motion design.',
     'about.bg_text': 'Creator',
     'studio.philosophy': 'The Philosophy',
     'studio.p1': 'Breathing life into the inanimate. Our practice goes beyond moving objects;',
@@ -30,7 +30,11 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.rights': 'All Rights Reserved',
     'projects.title': 'Design Styles',
     'projects.label': 'Selected Work',
-    'projects.view': 'View Reel'
+    'projects.view': 'View Reel',
+    'projects.soon': 'Coming soon',
+    'timeline.label': 'Career',
+    'timeline.title': 'Experience',
+    'timeline.education': 'Education'
   },
   es: {
     'nav.brand': 'Estudio de Motion Graphics',
@@ -40,8 +44,8 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.contact': 'Contacto',
     'hero.subtitle': 'DISEÑADOR DE MOTION GRAPHICS',
     'about.label': 'Sobre Mí',
-    'about.p1': 'Soy un Diseñador de Motion Graphics con 3 años de experiencia dedicado a dar vida a ideas estáticas a través de narrativas dinámicas. Mi experiencia abarca 8 estilos de movimiento distintos, lo que me permite adaptarme a las necesidades de cualquier proyecto, desde comerciales de alto impacto y contenido para redes sociales hasta intrincadas animaciones UX/UI y tipografía cinética.',
-    'about.p2': 'Me especializo en crear de todo, desde narrativas minimalistas al "estilo Dan Koe" hasta complejas animaciones de logotipos y fondos dinámicos. Mi enfoque siempre está en combinar la precisión técnica con el talento creativo para asegurar que cada fotograma tenga un propósito. Exploro constantemente nuevos lenguajes visuales para mantener mi trabajo a la vanguardia de las tendencias de la industria.',
+    'about.p1': 'Soy un Diseñador de Motion Graphics con 4 años de experiencia dedicado a dar vida a ideas estáticas a través de narrativas dinámicas. Mi experiencia abarca 8 estilos de movimiento distintos, lo que me permite adaptarme a las necesidades de cualquier proyecto, desde comerciales de alto impacto y contenido para redes sociales hasta intrincadas animaciones UX/UI y tipografía cinética.',
+    'about.p2': 'Me especializo en crear de todo, desde narrativas minimalistas al "estilo Dan Koe" hasta complejas animaciones de logotipos y fondos dinámicos. Mi enfoque siempre está en combinar la precisión técnica con el talento creativo para asegurar que cada fotograma tenga un propósito. Exploro constantemente nuevos lenguajes visuales para mantener mi trabajo a la vanguardia de las tendencias de la industria; hoy eso incluye la generación de video con IA, que combino con el motion design tradicional.',
     'about.bg_text': 'Creador',
     'studio.philosophy': 'La Filosofía',
     'studio.p1': 'Dando vida a lo inanimado. Nuestra práctica va más allá de mover objetos;',
@@ -53,7 +57,11 @@ const translations: Record<Language, Record<string, string>> = {
     'footer.rights': 'Todos los derechos reservados',
     'projects.title': 'Estilos de Diseño',
     'projects.label': 'Trabajo Seleccionado',
-    'projects.view': 'Ver Reel'
+    'projects.view': 'Ver Reel',
+    'projects.soon': 'Próximamente',
+    'timeline.label': 'Trayectoria',
+    'timeline.title': 'Experiencia',
+    'timeline.education': 'Estudios'
   }
 };
 
