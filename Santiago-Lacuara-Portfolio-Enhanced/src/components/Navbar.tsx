@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useLanguage } from "../context/LanguageContext";
 import { Menu, X } from "lucide-react";
@@ -8,6 +8,8 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [scrollHidden, setScrollHidden] = useState(false);
+  const hiddenRef = useRef(false);
+  useEffect(() => { hiddenRef.current = scrollHidden; }, [scrollHidden]);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [active, setActive] = useState("");
 
@@ -51,7 +53,9 @@ export default function Navbar() {
       if (y < 140) { setScrollHidden(false); anchor = y; return; }
       const delta = y - anchor;
       if (delta > 12) { setScrollHidden(true); anchor = y; }
-      else if (delta < -12) { setScrollHidden(false); anchor = y; }
+      else if (delta < -6) { setScrollHidden(false); anchor = y; }
+      // keep the anchor at the furthest point reached in the current direction
+      else if ((delta > 0 && hiddenRef.current) || (delta < 0 && !hiddenRef.current)) anchor = y;
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -119,10 +123,12 @@ export default function Navbar() {
   return (
     <>
       <motion.nav
-        initial={{ y: -120, opacity: 0 }}
-        animate={{ y: (isHidden || scrollHidden) ? -120 : 0, opacity: (isHidden || scrollHidden) ? 0 : 1 }}
+        initial={{ y: "-160%", opacity: 0 }}
+        // slide only (no opacity): fading a backdrop-blur element makes the browser
+        // re-render the blur every frame, which is what caused the hitch on scroll up
+        animate={{ y: (isHidden || scrollHidden) ? "-160%" : "0%", opacity: 1 }}
         transition={hasLoaded
-          ? { duration: 0.45, ease: [0.22, 1, 0.36, 1] }
+          ? { duration: 0.38, ease: [0.22, 1, 0.36, 1] }
           : { type: "spring", stiffness: 260, damping: 22, delay: NAV_START_DELAY - 0.3 }}
         className="fixed top-4 md:top-8 left-0 right-0 z-[100] px-4 md:px-8 mx-auto max-w-screen-xl pointer-events-none will-change-transform"
       >

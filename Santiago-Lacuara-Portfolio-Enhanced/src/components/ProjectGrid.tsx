@@ -16,32 +16,32 @@ const BASE = ["After Effects", "Premiere Pro"];
 // extra scroll (in viewport heights) after the last card so it rests in focus
 const STACK_TAIL = 0.5;
 const details: Record<number, { en: string; es: string; tags: string[] }> = {
-  1: { en: "Story-driven animations that turn ideas into visual narratives — from brand stories to explainers, built frame by frame.",
-       es: "Animaciones con narrativa que convierten ideas en historias visuales: desde historias de marca hasta explainers, construidas cuadro a cuadro.",
+  1: { en: "Story-driven animation that turns an idea into a visual narrative. I write the beats, design every scene and animate it frame by frame, so brand stories, explainers and launches feel like a short film, not a slideshow — with illustration, AI imagery and sound carrying the message.",
+       es: "Animación con narrativa que convierte una idea en una historia visual. Escribo los momentos clave, diseño cada escena y la animo cuadro a cuadro, para que historias de marca, explainers y lanzamientos se sientan como un cortometraje y no como una presentación, con ilustración, imágenes de IA y sonido contando el mensaje.",
        tags: [...BASE, "Illustrator", "AI Image Generation"] },
-  2: { en: "Type that moves with rhythm and intention — words timed to voice and music so every message lands.",
-       es: "Tipografía que se mueve con ritmo e intención: palabras sincronizadas con la voz y la música para que cada mensaje impacte.",
+  2: { en: "Type that moves with rhythm and intention. Every word is timed to the voice and the music, with weight, speed and spacing that follow the emotion of the script, so the message lands even with the sound off. Ideal for quotes, podcasts, ads and launch teasers.",
+       es: "Tipografía que se mueve con ritmo e intención. Cada palabra está sincronizada con la voz y la música, con peso, velocidad y espaciado que siguen la emoción del guion, para que el mensaje llegue incluso sin sonido. Ideal para frases, podcasts, anuncios y teasers de lanzamiento.",
        tags: [...BASE, "Illustrator"] },
-  3: { en: "Clean, Dan Koe–style animation: few elements, precise timing and plenty of negative space.",
-       es: "Animación limpia al estilo Dan Koe: pocos elementos, timing preciso y mucho espacio negativo.",
+  3: { en: "Clean, Dan Koe–style animation: few elements, precise timing and plenty of negative space. Simple shapes, a restrained palette and smooth easing keep all the attention on the idea, perfect for creators, educational content and brands that want to look calm and premium.",
+       es: "Animación limpia al estilo Dan Koe: pocos elementos, timing preciso y mucho espacio negativo. Formas simples, una paleta contenida y curvas de animación suaves mantienen toda la atención en la idea; perfecta para creadores, contenido educativo y marcas que quieren verse calmas y premium.",
        tags: [...BASE] },
-  4: { en: "Scroll-stopping vertical content and ads for brands like Cashea, Addnice and Mercado Libre.",
-       es: "Contenido vertical y anuncios que frenan el scroll, para marcas como Cashea, Addnice y Mercado Libre.",
+  4: { en: "Scroll-stopping vertical content and ads for brands like Cashea, Addnice and Mercado Libre. Fast hooks in the first second, captions, sound design and clean voice-overs, built natively for Reels, TikTok and Shorts and tested to keep people watching until the end.",
+       es: "Contenido vertical y anuncios que frenan el scroll, para marcas como Cashea, Addnice y Mercado Libre. Ganchos rápidos en el primer segundo, subtítulos, diseño sonoro y voces limpias, pensados de forma nativa para Reels, TikTok y Shorts para que la gente mire hasta el final.",
        tags: [...BASE, "Photoshop", "ElevenLabs", "Adobe Podcast", "AI Gen"] },
-  6: { en: "Logo reveals and brand intros that give an identity its first heartbeat.",
-       es: "Revelados de logo e intros de marca que le dan a una identidad su primer latido.",
+  6: { en: "Logo reveals and brand intros that give an identity its first heartbeat. I study the shapes and the personality of the brand to build an animation that feels like it, with versions for intros, outros, socials and presentations, so the logo moves the same way everywhere.",
+       es: "Revelados de logo e intros de marca que le dan a una identidad su primer latido. Estudio las formas y la personalidad de la marca para crear una animación que se sienta propia, con versiones para intros, cierres, redes y presentaciones, así el logo se mueve igual en todos lados.",
        tags: [...BASE] },
-  7: { en: "Interface animations and product showcases — showing how an app feels, not just how it looks.",
-       es: "Animaciones de interfaz y showcases de producto: muestran cómo se siente una app, no solo cómo se ve.",
+  7: { en: "Interface animation and product showcases for apps, websites and SaaS platforms. I take real screens and turn them into clear, smooth demos — onboarding flows, feature launches and dashboard walkthroughs — that show how the product feels, not just how it looks.",
+       es: "Animación de interfaces y showcases de producto para apps, sitios web y plataformas SaaS. Tomo pantallas reales y las convierto en demos claras y fluidas —onboardings, lanzamientos de funciones y recorridos de dashboards— que muestran cómo se siente el producto, no solo cómo se ve.",
        tags: [...BASE] },
-  8: { en: "Looping, generative backgrounds for screens, events and stages.",
-       es: "Fondos generativos en loop para pantallas, eventos y escenarios.",
+  8: { en: "Looping, generative backgrounds for screens, events, stages and live streams. Organic shapes, light and texture that move continuously without distracting, designed to loop seamlessly and to match the colours and the mood of each brand or show.",
+       es: "Fondos generativos en loop para pantallas, eventos, escenarios y transmisiones en vivo. Formas orgánicas, luz y textura que se mueven todo el tiempo sin distraer, diseñadas para repetirse sin cortes y para acompañar los colores y el clima de cada marca o show.",
        tags: [...BASE] },
-  9: { en: "Longer edits — YouTube videos, interviews and event recaps, with pacing, sound design and motion graphics.",
-       es: "Ediciones largas: videos de YouTube, entrevistas y resúmenes de eventos, con ritmo, diseño sonoro y motion graphics.",
+  9: { en: "Longer edits — YouTube videos, interviews, podcasts and event recaps. I shape the story in the edit, find the pace, clean up the audio and add motion graphics, captions and sound design so long content stays engaging from the first minute to the last.",
+       es: "Ediciones largas: videos de YouTube, entrevistas, podcasts y resúmenes de eventos. Armo la historia en la edición, encuentro el ritmo, limpio el audio y sumo motion graphics, subtítulos y diseño sonoro para que el contenido largo atrape del primer al último minuto.",
        tags: [...BASE, "ElevenLabs"] },
-  10: { en: "Videos generated with AI models and finished with motion design.",
-        es: "Videos generados con modelos de IA y terminados con motion design.",
+  10: { en: "Videos generated with AI models and finished with motion design. I combine image and video models with my own animation, editing and code-driven tools to create visuals that would be impossible or too expensive to shoot, keeping a consistent look across every shot.",
+        es: "Videos generados con modelos de IA y terminados con motion design. Combino modelos de imagen y video con mi propia animación, edición y herramientas basadas en código para crear visuales imposibles o demasiado caros de filmar, manteniendo una estética coherente en cada plano.",
         tags: [...BASE, "Higgsfield", "Runway", "Seedream", "Remotion", "Magnific", "Claude Code", "Antigravity", "Codex"] },
 };
 
@@ -83,7 +83,7 @@ const projects: Project[] = [
   },
   {
     id: 7,
-    title: "UX UI",
+    title: "UX UI & SaaS",
     category: "Interface",
     image: "/covers/ux-ui.webp",
     videos: ["09rOZHMihbc", "ajPRSX3PAgk", "vxdvbLCZn5U", "8N2LEo9ysXc", "F40p_FA9BnU", "x4VkU7qg_LQ", "zYzLro-d5jo"]
@@ -128,7 +128,7 @@ export default function ProjectGrid() {
     Minimalist: "Minimalista",
     "Social Media": "Redes Sociales",
     "Logo animation": "Animación de Logos",
-    "UX UI": "UX UI",
+    "UX UI & SaaS": "UX UI y SaaS",
     "Dynamic Backgrounds": "Fondos Dinámicos",
     "Long Form": "Formato Largo",
     "AI Gen": "Generado con IA",
@@ -243,7 +243,7 @@ export default function ProjectGrid() {
         </motion.div>
 
         {/* Stacking cards — each one sticks to the top and the next slides over it */}
-        <div ref={stackRef} className="relative">
+        <div ref={stackRef} className="relative lg:pr-[230px] xl:pr-[250px]">
           {projects.map((project, index) => (
             <StackCard
               key={project.id}
@@ -304,11 +304,16 @@ export default function ProjectGrid() {
 
               <div className="mb-6 md:mb-10 pt-6 md:pt-10 pr-14">
                 <span className="text-[10px] font-poppins font-bold uppercase tracking-[0.3em] text-white/50 mb-2 block text-shadow-strong">
-                  {projCat(selectedProject.category)}
+                  {language === "es" ? "Estilo" : "Style"}
                 </span>
                 <h3 className="text-3xl md:text-5xl font-poppins font-bold uppercase tracking-tighter text-shadow-strong">
                   {projTitle(selectedProject.title)}
                 </h3>
+                {details[selectedProject.id] && (
+                  <p className="mt-4 max-w-3xl text-sm md:text-base font-light leading-relaxed text-white/70">
+                    {details[selectedProject.id][language]}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 grid-flow-row-dense gap-3 md:gap-6">
@@ -365,7 +370,7 @@ function StackCard({
         style={{ scale, top: `calc(12vh + ${index * 14}px)` }}
         onClick={onOpen}
         data-card-id={project.id}
-        className="stack-card cursor-grow group relative origin-top w-full max-w-6xl h-[70vh] md:h-[62vh] rounded-3xl overflow-hidden cursor-pointer bg-zinc-900 grid grid-rows-[42%_1fr] md:grid-rows-1 md:grid-cols-[1.35fr_1fr] shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)]"
+        className="stack-card cursor-grow group relative origin-top w-full max-w-6xl h-[70vh] md:h-[66vh] rounded-3xl overflow-hidden cursor-pointer bg-zinc-900 grid grid-rows-[36%_1fr] md:grid-rows-1 md:grid-cols-[1.1fr_1fr] md:shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)]"
       >
         {/* Left: image */}
         <div className="relative overflow-hidden">
@@ -376,8 +381,9 @@ function StackCard({
               loading={index < 2 ? "eager" : "lazy"}
               decoding="async"
               {...(index === 0 ? { fetchPriority: "high" as const } : {})}
-              className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-out
-                ${isTop ? "grayscale-0 opacity-100 scale-100" : "grayscale opacity-60 scale-105"} group-hover:scale-[1.04]`}
+              // mobile: opacity only (no grayscale filter / zoom — those repaint the whole image while scrolling)
+              className={`stack-card__img absolute inset-0 w-full h-full object-cover transition-[opacity,transform,filter] duration-700 ease-out
+                ${isTop ? "opacity-100 md:grayscale-0 md:scale-100" : "opacity-50 md:opacity-60 md:grayscale md:scale-105"} md:group-hover:scale-[1.04]`}
               referrerPolicy="no-referrer"
             />
           ) : (
@@ -390,7 +396,7 @@ function StackCard({
         </div>
 
         {/* Right: info panel */}
-        <div className="stack-card__panel relative flex flex-col p-6 md:p-10 min-h-0">
+        <div className="stack-card__panel relative flex flex-col p-6 md:p-8 xl:p-10 min-h-0">
           <div className="flex items-center gap-3">
             <span className="stack-card__pill px-3 py-1 rounded-full text-[9px] md:text-[10px] font-grotesk font-medium uppercase tracking-[0.25em]">
               {category}
@@ -400,10 +406,10 @@ function StackCard({
             </span>
           </div>
 
-          <h3 className="mt-4 md:mt-6 text-3xl md:text-5xl font-poppins font-bold tracking-tight leading-[1.02]">
+          <h3 className="mt-4 md:mt-5 text-3xl md:text-4xl xl:text-5xl font-poppins font-bold tracking-tight leading-[1.02]">
             {title}
           </h3>
-          <p className="mt-3 md:mt-5 text-sm md:text-base font-light leading-relaxed text-white/60 line-clamp-3 md:line-clamp-4">
+          <p className="mt-3 md:mt-5 text-[13px] md:text-[15px] font-light leading-relaxed text-white/65 line-clamp-4 md:line-clamp-7">
             {desc}
           </p>
 
@@ -415,7 +421,7 @@ function StackCard({
                 </span>
               ))}
             </div>
-            <div className="stack-card__divider my-4 md:my-6" />
+            <div className="stack-card__divider my-4 md:my-5" />
             <span className="inline-flex items-center gap-2 text-sm md:text-base font-grotesk text-white/90">
               {viewLabel}
               <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" style={{ color: "#E9B872" }}>↗</span>
@@ -429,7 +435,7 @@ function StackCard({
         </svg>
 
         {/* dims as the next card slides over */}
-        <motion.div style={{ opacity: dim }} className="absolute inset-0 bg-black pointer-events-none z-20" />
+        <motion.div style={{ opacity: dim }} className="absolute inset-0 bg-black pointer-events-none z-20 will-change-[opacity]" />
       </motion.div>
     </div>
   );
@@ -471,89 +477,37 @@ function LiteYouTube({ id, title }: { id: string; title: string; key?: string | 
 }
 
 /**
- * Index of the styles. Desktop: a rail of dashes on the right — the active one is
- * long and amber, hovering the rail reveals every name. Mobile/tablet: a pill at
- * the bottom ("03 / 09 · Minimalist") that opens the full list.
+ * Index of the styles (desktop only). A column of amber pills on the right —
+ * always readable; the active style is solid amber, the rest tinted. Click to jump.
  */
 function StyleIndex({ titles, current, visible, label, onJump }: {
   titles: string[]; current: number; visible: boolean; label: string; onJump: (i: number) => void;
 }) {
-  const [open, setOpen] = useState(false);
-  useEffect(() => { if (!visible) setOpen(false); }, [visible]);
   const pad = (n: number) => String(n).padStart(2, "0");
-
   return (
-    <>
     <AnimatePresence>
       {visible && (
-          <motion.nav
-            key="rail"
-            aria-label={label}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="style-rail group/rail hidden lg:flex fixed right-5 top-1/2 -translate-y-1/2 z-40 flex-col items-end gap-2.5"
-          >
-            {titles.map((title, i) => {
-              const on = i === current;
-              return (
-                <button key={title} onClick={() => onJump(i)} aria-label={title} aria-current={on ? "true" : undefined}
-                  className="cursor-grow flex items-center gap-3 py-1">
-                  <span className={`style-rail__name text-[11px] font-grotesk uppercase tracking-[0.2em] whitespace-nowrap px-2.5 py-1 rounded-full
-                    opacity-0 translate-x-2 pointer-events-none group-hover/rail:pointer-events-auto group-hover/rail:opacity-100 group-hover/rail:translate-x-0 ${on ? "is-on" : ""}`}
-                    style={{ transitionDelay: `${i * 18}ms` }}>
-                    <span className="opacity-50 mr-2">{pad(i + 1)}</span>{title}
-                  </span>
-                  <span className={`style-rail__dash ${on ? "is-on" : ""}`} />
-                </button>
-              );
-            })}
-          </motion.nav>
+        <motion.nav
+          key="rail"
+          aria-label={label}
+          initial={{ opacity: 0, x: 24 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 24 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="style-rail hidden lg:flex fixed right-5 xl:right-8 top-1/2 -translate-y-1/2 z-40 flex-col items-end gap-2"
+        >
+          {titles.map((title, i) => {
+            const on = i === current;
+            return (
+              <button key={title} onClick={() => onJump(i)} aria-current={on ? "true" : undefined}
+                className={`style-rail__pill cursor-grow flex items-center gap-2 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-grotesk font-semibold uppercase tracking-[0.16em] ${on ? "is-on" : ""}`}>
+                <span className="tabular-nums opacity-70">{pad(i + 1)}</span>
+                {title}
+              </button>
+            );
+          })}
+        </motion.nav>
       )}
     </AnimatePresence>
-
-    {/* Mobile / tablet pill */}
-    <AnimatePresence>
-      {visible && (
-          <motion.div
-            key="pill"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:hidden fixed left-1/2 -translate-x-1/2 bottom-4 z-40 w-[min(92vw,360px)]"
-          >
-            <AnimatePresence>
-              {open && (
-                <motion.ul
-                  initial={{ opacity: 0, y: 10, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.97 }}
-                  transition={{ duration: 0.2 }}
-                  className="style-pill__list liquid-glass rounded-3xl p-2 mb-2 max-h-[55vh] overflow-y-auto"
-                >
-                  {titles.map((title, i) => (
-                    <li key={title}>
-                      <button onClick={() => { setOpen(false); onJump(i); }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left text-sm font-grotesk ${i === current ? "bg-white/10 text-[#E9B872]" : "text-white/80"}`}>
-                        <span className="text-[11px] opacity-50 tabular-nums">{pad(i + 1)}</span>{title}
-                      </button>
-                    </li>
-                  ))}
-                </motion.ul>
-              )}
-            </AnimatePresence>
-            <button onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={label}
-              className="style-pill liquid-glass w-full flex items-center gap-3 rounded-full pl-5 pr-4 py-3 text-sm font-grotesk">
-              <span className="text-[11px] tabular-nums tracking-[0.2em]"><span className="text-[#E9B872]">{pad(current + 1)}</span><span className="opacity-40"> / {pad(titles.length)}</span></span>
-              <span className="style-pill__sep" aria-hidden />
-              <span className="truncate flex-1 text-left">{titles[current]}</span>
-              <span className={`transition-transform duration-300 opacity-60 ${open ? "rotate-180" : ""}`} aria-hidden>▴</span>
-            </button>
-          </motion.div>
-      )}
-    </AnimatePresence>
-    </>
   );
 }

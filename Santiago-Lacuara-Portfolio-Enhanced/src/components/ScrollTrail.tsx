@@ -22,7 +22,10 @@ const toPixels = (w: number, h: number) =>
  */
 export default function ScrollTrail() {
   const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 24, mass: 0.5 });
+  const smooth = useSpring(scrollYProgress, { stiffness: 90, damping: 24, mass: 0.5 });
+  // mobile: follow the scroll directly (no extra spring frames after you stop)
+  const [isMobile] = useState(() => typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches);
+  const progress = isMobile ? scrollYProgress : smooth;
 
   const [d, setD] = useState("");
   useEffect(() => {

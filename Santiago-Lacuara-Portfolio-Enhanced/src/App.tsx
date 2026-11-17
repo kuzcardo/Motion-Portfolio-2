@@ -39,7 +39,8 @@ function AppContent() {
       ticking = true;
       requestAnimationFrame(() => {
         if (gridRef.current) {
-          gridRef.current.style.backgroundPositionY = `${-window.scrollY * 0.45}px`;
+          // the grid repeats every 118px, so shifting by (offset mod 118) is seamless
+          gridRef.current.style.transform = `translate3d(0, ${-((window.scrollY * 0.45) % 118)}px, 0)`;
         }
         ticking = false;
       });

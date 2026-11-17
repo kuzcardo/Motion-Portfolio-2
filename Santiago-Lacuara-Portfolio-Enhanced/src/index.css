@@ -125,7 +125,9 @@
     linear-gradient(to right, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
   background-size: 118px 118px;
-  will-change: background-position;
+  /* taller than the screen by one module: parallax moves it with transform (GPU), not background-position */
+  bottom: -118px;
+  will-change: transform;
 }
 body.light-mode .bg-grid-global {
   background-image:
@@ -648,6 +650,15 @@ body.light-mode .contact-gate__icon, body.light-mode .contact-gate__arrow { colo
   transition: stroke 0.5s ease;
 }
 .stack-card__stroke.is-top rect { stroke: rgba(233, 184, 114, 0.7); animation: contactMarchLong 2.4s linear infinite; }
+/* each card gets its own GPU layer, so scaling it while scrolling never repaints it */
+.stack-card { will-change: transform; transform: translateZ(0); backface-visibility: hidden; }
+@media (max-width: 767px) {
+  /* mobile: static dashes (the marching stroke repaints every frame) */
+  .stack-card__stroke.is-top rect { animation: none; }
+  /* the film grain stays, but frozen */
+  .grain-overlay { animation: none; }
+  .bg-blobs .gb { filter: blur(70px); }
+}
 .stack-card__panel {
   background:
     radial-gradient(120% 70% at 100% 0%, rgba(233, 184, 114, 0.22), transparent 55%),
@@ -722,23 +733,19 @@ body.light-mode .trail-line { stroke: rgba(200, 146, 74, 0.6); }
 @media (max-width: 767px) { .halo-ring { stroke-width: 0.6; stroke-dasharray: 1.6 1.1; } }
 body.light-mode .halo-ring { stroke: rgba(200, 146, 74, 0.85); }
 
-/* ---------- Style index ---------- */
-.style-rail__dash {
-  display: block; height: 0; width: 14px;
-  border-top: 2px dashed rgba(255, 255, 255, 0.3);
-  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
+/* ---------- Style index (desktop) ---------- */
+.style-rail__pill {
+  color: #fff;
+  background: rgba(233, 184, 114, 0.22);
+  border: 1px dashed rgba(233, 184, 114, 0.7);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  transition: background 0.35s ease, border-color 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
 }
-.style-rail button:hover .style-rail__dash { border-color: rgba(255, 255, 255, 0.7); }
-.style-rail__dash.is-on { width: 34px; border-top-style: solid; border-color: #E9B872; }
-.style-rail__name {
-  background: rgba(5, 5, 5, 0.75);
-  backdrop-filter: blur(10px);
-  border: 1px dashed rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.75);
-  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease;
+.style-rail__pill:hover { background: rgba(233, 184, 114, 0.45); transform: translateX(-4px); }
+.style-rail__pill.is-on {
+  background: #E9B872;
+  border: 1px solid #E9B872;
+  box-shadow: 0 0 0 5px rgba(233, 184, 114, 0.15), 0 0 22px rgba(233, 184, 114, 0.45);
+  transform: translateX(-6px);
 }
-.style-rail__name.is-on { color: #E9B872; border-color: rgba(233, 184, 114, 0.5); }
-.style-rail button:hover .style-rail__name { color: #fff; }
-.style-pill { border: 1px dashed rgba(233, 184, 114, 0.4); }
-.style-pill__sep { width: 14px; height: 0; border-top: 1.5px dashed rgba(255, 255, 255, 0.3); }
-.style-pill__list { background: rgba(10, 10, 10, 0.85); }
