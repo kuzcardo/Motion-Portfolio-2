@@ -50,8 +50,8 @@ export default function ContactSection() {
               <span>BUE ✦</span>
             </div>
 
-            <h2 className="text-[17vw] sm:text-[13vw] md:text-[6vw] xl:text-[88px] font-display font-bold uppercase leading-[0.88] tracking-tighter">
-              <span className="gold-text">{t("contact.title")}</span>
+            <h2 className="text-[17vw] sm:text-[13vw] md:text-[6vw] xl:text-[88px] font-display font-bold uppercase leading-[0.9] tracking-tighter text-white">
+              {t("contact.title")}
             </h2>
 
             <div className="grid grid-cols-2 gap-8 text-[9px] font-grotesk uppercase tracking-[0.35em] text-white/40">

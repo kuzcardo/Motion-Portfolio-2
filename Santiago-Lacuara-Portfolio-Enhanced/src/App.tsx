@@ -10,7 +10,8 @@ import Marquee from "./components/Marquee";
 import Loader from "./components/Loader";
 import Magnetic from "./components/Magnetic";
 import ContactSection from "./components/ContactSection";
-import { motion, AnimatePresence, useScroll } from "motion/react";
+import BoatProgress from "./components/BoatProgress";
+import { AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { LanguageProvider, useLanguage } from "./context/LanguageContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -18,7 +19,6 @@ import { ThemeProvider } from "./context/ThemeContext";
 function AppContent() {
   const { t } = useLanguage();
   const gridRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll();
 
   // Intro loader (shows once on load, then reveals the site)
   const [loading, setLoading] = useState(true);
@@ -53,14 +53,6 @@ function AppContent() {
       {/* Intro loader */}
       <AnimatePresence>{loading && <Loader />}</AnimatePresence>
 
-      {/* Scroll progress bar */}
-      <motion.div
-        style={{ scaleX: scrollYProgress }}
-        className="fixed top-0 left-0 right-0 h-[2px] origin-left z-[150]"
-        aria-hidden
-      >
-        <div className="w-full h-full" style={{ backgroundColor: "#E9B872" }} />
-      </motion.div>
 
       {/* Global drifting orange blobs (whole page) */}
       <div className="bg-blobs" aria-hidden>
@@ -68,6 +60,8 @@ function AppContent() {
       </div>
       {/* Global parallax grid (whole page) */}
       <div ref={gridRef} className="bg-grid-global" aria-hidden />
+      {/* Scroll progress: a boat sailing across the background */}
+      <BoatProgress />
       {/* Global film grain texture */}
       <div className="grain-overlay" aria-hidden />
 

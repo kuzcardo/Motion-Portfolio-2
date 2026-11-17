@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion, animate, useMotionValue, useSpring, useTransform } from "motion/react";
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import Timeline from "./Timeline";
@@ -51,6 +51,23 @@ export default function HeroAboutSection() {
     };
   }, []);
 
+  // Hero ring rotation = entry spin + cursor-driven turn. Both ease in and out:
+  // the entry is a tween with an in-out curve, the cursor part a soft, heavy spring.
+  const entrySpin = useMotionValue(-180);
+  const cursorSpin = useSpring(0, { stiffness: 22, damping: 14, mass: 1.6 });
+  const ringRotate = useTransform([entrySpin, cursorSpin], ([a, b]: number[]) => a + b);
+  useEffect(() => {
+    const ctrl = animate(entrySpin, 0, { duration: 2.6, delay: 0.2, ease: [0.65, 0, 0.35, 1] });
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { ctrl.stop(); entrySpin.set(0); return; }
+    const onMove = (e: MouseEvent) => {
+      const nx = e.clientX / window.innerWidth - 0.5;
+      const ny = e.clientY / window.innerHeight - 0.5;
+      cursorSpin.set(nx * 140 + ny * 40);
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => { ctrl.stop(); window.removeEventListener("mousemove", onMove); };
+  }, []);
+
   const { language } = useLanguage();
   const subtitleText = t('hero.subtitle');
   const words = subtitleText.split(" ");
@@ -68,8 +85,12 @@ export default function HeroAboutSection() {
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", bounce: 0.6, duration: 1.5, delay: 0.2 }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] md:w-[450px] md:h-[450px] rounded-full border-[1.5px] border-white halo-glow z-0"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] md:w-[450px] md:h-[450px] rounded-full halo-glow z-0"
         >
+          {/* dashed ring — spins in on entry and turns with the cursor (eased both ways) */}
+          <motion.svg style={{ rotate: ringRotate }} viewBox="0 0 100 100" className="absolute inset-0 w-full h-full overflow-visible" aria-hidden>
+            <circle cx="50" cy="50" r="49.6" pathLength={100} className="halo-ring" />
+          </motion.svg>
           <div className="halo-follow" />
         </motion.div>
 

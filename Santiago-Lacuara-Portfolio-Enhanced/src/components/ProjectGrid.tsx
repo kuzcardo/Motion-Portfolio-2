@@ -434,9 +434,6 @@ function LiteYouTube({ id, title }: { id: string; title: string; key?: string | 
         className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover/yt:opacity-100 group-hover/yt:scale-105 transition-all duration-500"
       />
       <span className="absolute inset-0 bg-black/20 group-hover/yt:bg-black/0 transition-colors" />
-      <span className="lite-yt__play absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center">
-        <svg viewBox="0 0 24 24" className="w-5 h-5 ml-0.5" fill="currentColor" aria-hidden><path d="M8 5v14l11-7z" /></svg>
-      </span>
     </button>
   );
 }

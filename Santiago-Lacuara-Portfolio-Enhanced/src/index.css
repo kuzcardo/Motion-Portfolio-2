@@ -695,9 +695,39 @@ body.light-mode .stack-card__tag, body.light-mode .stack-card__divider { border-
 }
 
 /* lightweight YouTube thumbnails in the reel modal */
-.lite-yt__play {
-  color: #050505; background: #E9B872;
-  box-shadow: 0 0 0 6px rgba(233, 184, 114, 0.18), 0 8px 30px rgba(0, 0, 0, 0.5);
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+
+/* ---------- Scroll progress boat ---------- */
+.boat-layer { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.boat-route { fill: none; stroke: rgba(233, 184, 114, 0.16); stroke-width: 1.5; stroke-dasharray: 6 9; }
+.boat-wake { fill: none; stroke: rgba(233, 184, 114, 0.45); stroke-width: 1.5; stroke-linecap: round; }
+.boat {
+  width: 36px; height: 36px; margin: -18px 0 0 -18px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 9999px; color: #050505; background: #E9B872;
+  box-shadow: 0 0 0 6px rgba(233, 184, 114, 0.15), 0 0 24px rgba(233, 184, 114, 0.5);
 }
-.group\/yt:hover .lite-yt__play { transform: translate(-50%, -50%) scale(1.12); }
+.boat__bob { display: flex; animation: boat-bob 2.4s ease-in-out infinite; }
+@keyframes boat-bob { 0%, 100% { translate: 0 -1px; rotate: -4deg; } 50% { translate: 0 1.5px; rotate: 4deg; } }
+body.light-mode .boat-route { stroke: rgba(200, 146, 74, 0.3); }
+body.light-mode .boat-wake { stroke: rgba(200, 146, 74, 0.6); }
+@media (max-width: 767px) { .boat { width: 30px; height: 30px; margin: -15px 0 0 -15px; } }
+@media (prefers-reduced-motion: reduce) { .boat__bob { animation: none; } }
+
+/* Navbar glow: a soft radial gradient instead of a live blur(80px) — moves on the compositor only */
+.nav-glow {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 65%);
+  will-change: transform;
+  animation: nav-glow 10s ease-in-out infinite;
+}
+@keyframes nav-glow { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(100px, -20px) scale(1.2); } }
+
+/* Hero ring: dashed, like the rest of the site */
+.halo-ring {
+  fill: none;
+  stroke: rgba(233, 184, 114, 0.75);
+  stroke-width: 0.36; /* user units: ~1.6px on the 450px ring */
+  stroke-dasharray: 1.1 0.75; /* of pathLength 100 → ~15px dashes */
+  stroke-linecap: round;
+}
+@media (max-width: 767px) { .halo-ring { stroke-width: 0.6; stroke-dasharray: 1.6 1.1; } }
+body.light-mode .halo-ring { stroke: rgba(200, 146, 74, 0.85); }

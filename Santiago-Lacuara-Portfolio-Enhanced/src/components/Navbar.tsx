@@ -40,16 +40,22 @@ export default function Navbar() {
   }, []);
 
   // Hide on scroll down, reappear (with a pop) on scroll up
+  // Only reacts to a deliberate scroll (12px in one direction), once per frame,
+  // so trackpad jitter / momentum doesn't make it flicker in and out.
   useEffect(() => {
-    let lastY = window.scrollY;
-    const onScroll = () => {
+    let anchor = window.scrollY;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
       const y = window.scrollY;
-      if (y > lastY && y > 140) setScrollHidden(true);
-      else if (y < lastY) setScrollHidden(false);
-      lastY = y;
+      if (y < 140) { setScrollHidden(false); anchor = y; return; }
+      const delta = y - anchor;
+      if (delta > 12) { setScrollHidden(true); anchor = y; }
+      else if (delta < -12) { setScrollHidden(false); anchor = y; }
     };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
   }, []);
 
   // Prevent scrolling when mobile menu is open
@@ -70,7 +76,8 @@ export default function Navbar() {
       opacity: 1,
       transition: {
         staggerChildren: 0.02,
-        delayChildren: NAV_START_DELAY,
+        // only wait for the hero intro on first load — switching language re-animates right away
+        delayChildren: hasLoaded ? 0 : NAV_START_DELAY,
       },
     },
   };
@@ -114,31 +121,16 @@ export default function Navbar() {
       <motion.nav
         initial={{ y: -120, opacity: 0 }}
         animate={{ y: (isHidden || scrollHidden) ? -120 : 0, opacity: (isHidden || scrollHidden) ? 0 : 1 }}
-        transition={{
-          type: "spring",
-          stiffness: 260,
-          damping: 22,
-          delay: hasLoaded ? 0 : NAV_START_DELAY - 0.3
-        }}
-        className="fixed top-4 md:top-8 left-0 right-0 z-[100] px-4 md:px-8 mx-auto max-w-screen-xl pointer-events-none"
+        transition={hasLoaded
+          ? { duration: 0.45, ease: [0.22, 1, 0.36, 1] }
+          : { type: "spring", stiffness: 260, damping: 22, delay: NAV_START_DELAY - 0.3 }}
+        className="fixed top-4 md:top-8 left-0 right-0 z-[100] px-4 md:px-8 mx-auto max-w-screen-xl pointer-events-none will-change-transform"
       >
         {/* Desktop Navbar (lg and up) */}
         <div className="hidden lg:flex relative overflow-hidden rounded-full px-14 py-6 liquid-glass items-center justify-between pointer-events-auto">
           {/* Liquid Glow Effect */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <motion.div 
-              animate={{ 
-                x: [0, 100, 0],
-                y: [0, -20, 0],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{ 
-                duration: 10, 
-                repeat: Infinity, 
-                ease: "easeInOut" 
-              }}
-              className="absolute -top-1/2 -left-1/2 w-full h-full bg-white/5 blur-[80px] rounded-full"
-            />
+            <div className="nav-glow absolute -top-1/2 -left-1/2 w-full h-full rounded-full" />
           </div>
 
           {/* Brand Text with Stagger */}
