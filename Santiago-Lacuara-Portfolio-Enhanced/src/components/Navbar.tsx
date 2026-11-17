@@ -23,7 +23,7 @@ export default function Navbar() {
   }, []);
 
   // Timing: Hero subtitle ends around 4.5s. Navbar starts shortly after.
-  const NAV_START_DELAY = 4.8;
+  const NAV_START_DELAY = 2.7;
 
   useEffect(() => {
     const timer = setTimeout(() => setHasLoaded(true), NAV_START_DELAY * 1000);

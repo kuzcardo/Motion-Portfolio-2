@@ -194,6 +194,30 @@ export default function ProjectGrid() {
     setCurrent((prev) => (prev === i ? prev : i));
   });
 
+  // Style index: visible while the stack is on screen; jumps straight to a card
+  const [inStack, setInStack] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      const el = stackRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const on = r.top < vh * 0.5 && r.bottom > vh * 0.6;
+      setInStack((p) => (p === on ? p : on));
+    };
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    return () => { window.removeEventListener("scroll", check); window.removeEventListener("resize", check); };
+  }, []);
+  const jumpTo = (i: number) => {
+    const el = stackRef.current;
+    const slot = el?.children[0] as HTMLElement | undefined;
+    if (!el || !slot) return;
+    const top = el.getBoundingClientRect().top + window.scrollY + i * slot.offsetHeight + 2;
+    window.scrollTo({ top, behavior: "smooth" });
+  };
+
   const handleProjectClick = (project: Project) => {
     setSelectedProject(project);
   };
@@ -241,6 +265,14 @@ export default function ProjectGrid() {
           <div aria-hidden style={{ height: `${STACK_TAIL * 100}vh` }} />
         </div>
       </div>
+
+      <StyleIndex
+        titles={projects.map((p) => projTitle(p.title))}
+        current={current}
+        visible={inStack && !selectedProject}
+        label={t('projects.title')}
+        onJump={jumpTo}
+      />
 
       {/* Video Modal Popup */}
       <AnimatePresence>
@@ -435,5 +467,93 @@ function LiteYouTube({ id, title }: { id: string; title: string; key?: string | 
       />
       <span className="absolute inset-0 bg-black/20 group-hover/yt:bg-black/0 transition-colors" />
     </button>
+  );
+}
+
+/**
+ * Index of the styles. Desktop: a rail of dashes on the right — the active one is
+ * long and amber, hovering the rail reveals every name. Mobile/tablet: a pill at
+ * the bottom ("03 / 09 · Minimalist") that opens the full list.
+ */
+function StyleIndex({ titles, current, visible, label, onJump }: {
+  titles: string[]; current: number; visible: boolean; label: string; onJump: (i: number) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => { if (!visible) setOpen(false); }, [visible]);
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  return (
+    <>
+    <AnimatePresence>
+      {visible && (
+          <motion.nav
+            key="rail"
+            aria-label={label}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="style-rail group/rail hidden lg:flex fixed right-5 top-1/2 -translate-y-1/2 z-40 flex-col items-end gap-2.5"
+          >
+            {titles.map((title, i) => {
+              const on = i === current;
+              return (
+                <button key={title} onClick={() => onJump(i)} aria-label={title} aria-current={on ? "true" : undefined}
+                  className="cursor-grow flex items-center gap-3 py-1">
+                  <span className={`style-rail__name text-[11px] font-grotesk uppercase tracking-[0.2em] whitespace-nowrap px-2.5 py-1 rounded-full
+                    opacity-0 translate-x-2 pointer-events-none group-hover/rail:pointer-events-auto group-hover/rail:opacity-100 group-hover/rail:translate-x-0 ${on ? "is-on" : ""}`}
+                    style={{ transitionDelay: `${i * 18}ms` }}>
+                    <span className="opacity-50 mr-2">{pad(i + 1)}</span>{title}
+                  </span>
+                  <span className={`style-rail__dash ${on ? "is-on" : ""}`} />
+                </button>
+              );
+            })}
+          </motion.nav>
+      )}
+    </AnimatePresence>
+
+    {/* Mobile / tablet pill */}
+    <AnimatePresence>
+      {visible && (
+          <motion.div
+            key="pill"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:hidden fixed left-1/2 -translate-x-1/2 bottom-4 z-40 w-[min(92vw,360px)]"
+          >
+            <AnimatePresence>
+              {open && (
+                <motion.ul
+                  initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.97 }}
+                  transition={{ duration: 0.2 }}
+                  className="style-pill__list liquid-glass rounded-3xl p-2 mb-2 max-h-[55vh] overflow-y-auto"
+                >
+                  {titles.map((title, i) => (
+                    <li key={title}>
+                      <button onClick={() => { setOpen(false); onJump(i); }}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left text-sm font-grotesk ${i === current ? "bg-white/10 text-[#E9B872]" : "text-white/80"}`}>
+                        <span className="text-[11px] opacity-50 tabular-nums">{pad(i + 1)}</span>{title}
+                      </button>
+                    </li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
+            <button onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={label}
+              className="style-pill liquid-glass w-full flex items-center gap-3 rounded-full pl-5 pr-4 py-3 text-sm font-grotesk">
+              <span className="text-[11px] tabular-nums tracking-[0.2em]"><span className="text-[#E9B872]">{pad(current + 1)}</span><span className="opacity-40"> / {pad(titles.length)}</span></span>
+              <span className="style-pill__sep" aria-hidden />
+              <span className="truncate flex-1 text-left">{titles[current]}</span>
+              <span className={`transition-transform duration-300 opacity-60 ${open ? "rotate-180" : ""}`} aria-hidden>▴</span>
+            </button>
+          </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }

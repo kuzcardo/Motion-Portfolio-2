@@ -13,7 +13,7 @@ export default function HeroAboutSection() {
 
   // Typewriter sequence: types "Santiago" then "Lacuara" (slower, no caret)
   useEffect(() => {
-    const w1 = "Santiago", w2 = "Lacuara", speed = 125;
+    const w1 = "Santiago", w2 = "Lacuara", speed = 75;
     let i = 0, j = 0;
     const timers: ReturnType<typeof setTimeout>[] = [];
     const step2 = () => {
@@ -23,7 +23,7 @@ export default function HeroAboutSection() {
       if (i <= w1.length) { setTyped1(w1.slice(0, i)); i++; timers.push(setTimeout(step1, speed)); }
       else { timers.push(setTimeout(step2, 160)); }
     };
-    timers.push(setTimeout(step1, 1700));
+    timers.push(setTimeout(step1, 1300));
     return () => timers.forEach(clearTimeout);
   }, []);
 
@@ -57,7 +57,7 @@ export default function HeroAboutSection() {
   const cursorSpin = useSpring(0, { stiffness: 22, damping: 14, mass: 1.6 });
   const ringRotate = useTransform([entrySpin, cursorSpin], ([a, b]: number[]) => a + b);
   useEffect(() => {
-    const ctrl = animate(entrySpin, 0, { duration: 2.6, delay: 0.2, ease: [0.65, 0, 0.35, 1] });
+    const ctrl = animate(entrySpin, 0, { duration: 2.2, delay: 0.9, ease: [0.65, 0, 0.35, 1] });
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { ctrl.stop(); entrySpin.set(0); return; }
     const onMove = (e: MouseEvent) => {
       const nx = e.clientX / window.innerWidth - 0.5;
@@ -73,8 +73,8 @@ export default function HeroAboutSection() {
   const words = subtitleText.split(" ");
   // The long intro delay only applies on first load; switching language replays instantly.
   const introDone = useRef(false);
-  useEffect(() => { const tm = setTimeout(() => { introDone.current = true; }, 4500); return () => clearTimeout(tm); }, []);
-  const subDelay = introDone.current ? 0 : 3.9;
+  useEffect(() => { const tm = setTimeout(() => { introDone.current = true; }, 3000); return () => clearTimeout(tm); }, []);
+  const subDelay = introDone.current ? 0 : 2.5;
 
   return (
     <>
@@ -84,7 +84,7 @@ export default function HeroAboutSection() {
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", bounce: 0.6, duration: 1.5, delay: 0.2 }}
+          transition={{ type: "spring", bounce: 0.6, duration: 1.5, delay: 0.9 }}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] md:w-[450px] md:h-[450px] rounded-full halo-glow z-0"
         >
           {/* dashed ring — spins in on entry and turns with the cursor (eased both ways) */}
@@ -106,7 +106,7 @@ export default function HeroAboutSection() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 3.9 }}
+          transition={{ delay: 2.5 }}
           className="absolute bottom-10 md:bottom-12 flex flex-col items-center gap-4 z-20"
         >
           <div className="flex gap-2 md:gap-3 flex-wrap justify-center px-4">
@@ -125,7 +125,7 @@ export default function HeroAboutSection() {
           <motion.div
             initial={{ scaleY: 0, originY: 0 }}
             animate={{ scaleY: 1 }}
-            transition={{ delay: 4.5, duration: 1 }}
+            transition={{ delay: 2.9, duration: 1 }}
             className="w-[1px] h-12 md:h-16 bg-white"
           />
         </motion.div>

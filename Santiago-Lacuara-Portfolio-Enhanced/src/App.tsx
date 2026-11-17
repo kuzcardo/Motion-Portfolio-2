@@ -10,7 +10,7 @@ import Marquee from "./components/Marquee";
 import Loader from "./components/Loader";
 import Magnetic from "./components/Magnetic";
 import ContactSection from "./components/ContactSection";
-import BoatProgress from "./components/BoatProgress";
+import ScrollTrail from "./components/ScrollTrail";
 import { AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { LanguageProvider, useLanguage } from "./context/LanguageContext";
@@ -23,7 +23,7 @@ function AppContent() {
   // Intro loader (shows once on load, then reveals the site)
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const tmr = setTimeout(() => setLoading(false), 1600);
+    const tmr = setTimeout(() => setLoading(false), 1100);
     return () => clearTimeout(tmr);
   }, []);
   useEffect(() => {
@@ -60,8 +60,8 @@ function AppContent() {
       </div>
       {/* Global parallax grid (whole page) */}
       <div ref={gridRef} className="bg-grid-global" aria-hidden />
-      {/* Scroll progress: a boat sailing across the background */}
-      <BoatProgress />
+      {/* Scroll progress: a trim path drawing across the background */}
+      <ScrollTrail />
       {/* Global film grain texture */}
       <div className="grain-overlay" aria-hidden />
 
