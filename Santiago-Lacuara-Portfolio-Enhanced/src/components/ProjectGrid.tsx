@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from "motion/react";
-import { useState, useEffect } from "react";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, type MotionValue } from "motion/react";
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { X } from "lucide-react";
 
@@ -113,16 +113,6 @@ export default function ProjectGrid() {
   };
   const projCat = (cat: string) => (language === "es" ? catES[cat] || cat : cat);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
   useEffect(() => {
     // Notify Navbar to hide/show
     const event = new CustomEvent('toggleNavbar', { detail: selectedProject !== null });
@@ -139,37 +129,21 @@ export default function ProjectGrid() {
     return () => window.removeEventListener('keydown', onKey);
   }, [selectedProject]);
 
-  // On mobile (no hover), illuminate the card closest to the viewport center
-  // as the user scrolls — the cards "light up" on their own while swiping.
-  useEffect(() => {
-    if (!isMobile) { setActiveProjectId(null); return; }
-    let raf = 0;
-    const update = () => {
-      const cards = document.querySelectorAll<HTMLElement>('[data-card-id]');
-      const center = window.innerHeight / 2;
-      let bestId: number | null = null;
-      let bestDist = Infinity;
-      cards.forEach((c) => {
-        const r = c.getBoundingClientRect();
-        const cy = r.top + r.height / 2;
-        const d = Math.abs(cy - center);
-        if (d < bestDist) { bestDist = d; bestId = Number(c.getAttribute('data-card-id')); }
-      });
-      // only light it up when a card is genuinely near the middle of the screen
-      setActiveProjectId(bestDist < window.innerHeight * 0.45 ? bestId : null);
-    };
-    const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    update();
-    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
-  }, [isMobile]);
+  // Stacking cards: progress through the whole stack drives scaling + the live counter
+  const stackRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start start", "end end"] });
+  const [current, setCurrent] = useState(0);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const i = Math.min(projects.length - 1, Math.max(0, Math.floor(v * projects.length)));
+    setCurrent((prev) => (prev === i ? prev : i));
+  });
 
   const handleProjectClick = (project: Project) => {
     setSelectedProject(project);
   };
 
   return (
-    <section id="work" className="relative py-24 md:py-40 px-4 md:px-12 overflow-hidden">
+    <section id="work" className="relative py-24 md:py-40 px-4 md:px-12 overflow-x-clip">
       <div className="max-w-screen-2xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0 }}
@@ -184,65 +158,28 @@ export default function ProjectGrid() {
             <h2 className="text-5xl md:text-8xl font-display font-bold uppercase tracking-tighter leading-[0.9]">{t('projects.title')}</h2>
           </div>
           <span className="text-[10px] font-grotesk font-light uppercase tracking-[0.4em] text-white/60">
-            <span style={{ color: "#E9B872" }}>01</span> — {projects.length < 10 ? `0${projects.length}` : projects.length}
+            <span style={{ color: "#E9B872" }}>{String(current + 1).padStart(2, "0")}</span> — {String(projects.length).padStart(2, "0")}
           </span>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        {/* Stacking cards — each one sticks to the top and the next slides over it */}
+        <div ref={stackRef} className="relative">
           {projects.map((project, index) => (
-            <motion.div
+            <StackCard
               key={project.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: (index % 4) * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -8 }}
-              onClick={() => handleProjectClick(project)}
-              data-card-id={project.id}
-              className="cursor-grow group relative aspect-[3/4] overflow-hidden bg-zinc-900 cursor-pointer rounded-2xl border border-white/5"
-            >
-              {project.image ? (
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className={`w-full h-full object-cover grayscale transition-all duration-1000 ease-out scale-105
-                    ${isMobile
-                      ? (activeProjectId === project.id ? 'grayscale-0 opacity-100 scale-100' : 'opacity-50')
-                      : 'opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-100'}`}
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                // Typographic cover for cards that don't have an image yet
-                <div className={`absolute inset-0 card-cover transition-all duration-1000 ease-out
-                  ${isMobile
-                    ? (activeProjectId === project.id ? 'is-active' : '')
-                    : ''}`}>
-                  <span className="card-cover__word font-display font-bold uppercase tracking-tighter">
-                    {project.title === "AI Gen" ? "AI" : "16:9"}
-                  </span>
-                </div>
-              )}
-
-              {/* Index number always visible */}
-              <span className="absolute top-5 left-5 z-20 text-[10px] font-grotesk font-medium tracking-[0.3em] text-white/70 text-shadow-strong">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-
-              <div className={`absolute inset-0 p-7 md:p-9 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent transition-opacity duration-500
-                ${isMobile
-                  ? (activeProjectId === project.id ? 'opacity-100' : 'opacity-0')
-                  : 'opacity-0 group-hover:opacity-100'}`}>
-                <span className="text-[10px] font-grotesk font-semibold uppercase tracking-[0.3em] mb-2 text-shadow-strong" style={{ color: "#E9B872" }}>{projCat(project.category)}</span>
-                <h3 className="text-2xl md:text-3xl font-poppins font-bold uppercase tracking-tighter text-shadow-strong">{projTitle(project.title)}</h3>
-                <span className="mt-3 text-[9px] font-grotesk uppercase tracking-[0.3em] text-white/60 flex items-center gap-2">
-                  {t('projects.view')} <span aria-hidden>→</span>
-                </span>
-              </div>
-            </motion.div>
+              project={project}
+              index={index}
+              total={projects.length}
+              progress={scrollYProgress}
+              isTop={index === current}
+              title={projTitle(project.title)}
+              category={projCat(project.category)}
+              viewLabel={t('projects.view')}
+              onOpen={() => handleProjectClick(project)}
+            />
           ))}
         </div>
       </div>
-
 
       {/* Video Modal Popup */}
       <AnimatePresence>
@@ -320,5 +257,74 @@ export default function ProjectGrid() {
         )}
       </AnimatePresence>
     </section>
+  );
+}
+
+function StackCard({
+  project, index, total, progress, isTop, title, category, viewLabel, onOpen,
+}: {
+  project: Project; index: number; total: number; progress: MotionValue<number>; isTop: boolean;
+  title: string; category: string; viewLabel: string; onOpen: () => void; key?: string | number;
+}) {
+  const isLast = index === total - 1;
+  // once the next card starts covering this one, shrink it a little and dim it
+  const start = index / total;
+  const scale = useTransform(progress, [start, 1], [1, isLast ? 1 : 1 - (total - 1 - index) * 0.025]);
+  const dim = useTransform(progress, [start, Math.min(1, start + 1 / total)], [0, isLast ? 0 : 0.6]);
+
+  return (
+    <div className="sticky top-0 h-[78vh] md:h-[88vh] flex items-start justify-center">
+      <motion.div
+        style={{ scale, top: `calc(13vh + ${index * 14}px)` }}
+        onClick={onOpen}
+        data-card-id={project.id}
+        className="stack-card cursor-grow group relative origin-top w-full max-w-6xl h-[56vh] md:h-[66vh] rounded-3xl overflow-hidden cursor-pointer bg-zinc-900 shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)]"
+      >
+        {project.image ? (
+          <img
+            src={project.image}
+            alt={project.title}
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-out
+              ${isTop ? "grayscale-0 opacity-90 scale-100" : "grayscale opacity-60 scale-105"} group-hover:scale-[1.03]`}
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <div className={`absolute inset-0 card-cover ${isTop ? "is-active" : ""}`}>
+            <span className="card-cover__word font-display font-bold uppercase tracking-tighter">
+              {project.title === "AI Gen" ? "AI" : "16:9"}
+            </span>
+          </div>
+        )}
+
+        {/* readability gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/30 pointer-events-none" />
+
+        {/* dashed amber stroke, marching on the card that's on top */}
+        <svg className={`stack-card__stroke ${isTop ? "is-top" : ""}`} aria-hidden>
+          <rect x="0.75" y="0.75" rx="24" ry="24" />
+        </svg>
+
+        {/* top row */}
+        <div className="absolute top-5 left-5 right-5 md:top-7 md:left-8 md:right-8 flex items-center justify-between z-10 text-[10px] font-grotesk tracking-[0.35em] uppercase">
+          <span className="text-white/70 text-shadow-strong">
+            <span style={{ color: "#E9B872" }}>{String(index + 1).padStart(2, "0")}</span> / {String(total).padStart(2, "0")}
+          </span>
+          <span className="text-shadow-strong" style={{ color: "#E9B872" }}>{category}</span>
+        </div>
+
+        {/* bottom row */}
+        <div className="absolute left-5 right-5 bottom-5 md:left-8 md:right-8 md:bottom-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4 z-10">
+          <h3 className="text-4xl sm:text-5xl md:text-7xl font-poppins font-bold uppercase tracking-tighter leading-[0.9] text-shadow-strong">
+            {title}
+          </h3>
+          <span className="stack-card__cta self-start md:self-auto inline-flex items-center gap-3 rounded-full px-5 py-3 text-[10px] font-grotesk uppercase tracking-[0.35em] whitespace-nowrap">
+            {viewLabel} <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1">→</span>
+          </span>
+        </div>
+
+        {/* dims as the next card slides over */}
+        <motion.div style={{ opacity: dim }} className="absolute inset-0 bg-black pointer-events-none z-20" />
+      </motion.div>
+    </div>
   );
 }
