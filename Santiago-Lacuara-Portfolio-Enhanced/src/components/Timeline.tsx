@@ -55,12 +55,15 @@ export default function Timeline() {
   // Scroll progress through the list drives the plane and the solid trail behind it
   const { scrollYProgress } = useScroll({ target: listRef, offset: ["start 70%", "end 55%"] });
   const progress = useSpring(scrollYProgress, { stiffness: 110, damping: 26, mass: 0.4 });
-  const planeTop = useTransform(progress, (v) => `${Math.min(Math.max(v, 0), 1) * 100}%`);
+  // the plane (and its trail) stop on the last dot — the present job
+  const stops = useRef<number[]>([]);
+  const endAt = () => stops.current[stops.current.length - 1] ?? 1;
+  const clamped = useTransform(progress, (v) => Math.min(Math.max(v, 0), endAt()));
+  const planeTop = useTransform(clamped, (v) => `${v * 100}%`);
   // a little wobble while flying
   const planeTilt = useTransform(progress, (v) => 135 + Math.sin(v * Math.PI * 6) * 8);
 
   // Where each dot sits along the track (0..1), measured from the DOM
-  const stops = useRef<number[]>([]);
   useEffect(() => {
     const measure = () => {
       const list = listRef.current;
@@ -88,63 +91,20 @@ export default function Timeline() {
   });
   const active = reached - 1;
 
-  // Arrival show: when the plane lands on the present job it leaves the line,
-  // does a lap around that card, and comes back to the track.
+  // Arrival: when the plane lands on the present job it does a bigger pulse
+  // (the plane itself bumps and the last dot sends out larger rings).
   const planeRef = useRef<HTMLDivElement>(null);
-  const loopX = useMotionValue(0);
-  const loopY = useMotionValue(0);
-  const loopRot = useMotionValue(0); // added on top of the normal tilt
-  const looping = useRef(false);
+  const planeScale = useMotionValue(1);
   const prevReached = useRef(0);
-  const planeRotate = useTransform(() => planeTilt.get() + loopRot.get());
+  const [arrivals, setArrivals] = useState(0); // re-keys the big rings so they replay
 
   useEffect(() => {
     const arrived = reached === entries.length && prevReached.current < entries.length;
     prevReached.current = reached;
-    if (!arrived || looping.current) return;
+    if (!arrived) return;
+    setArrivals((n) => n + 1);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const plane = planeRef.current;
-    const card = listRef.current?.querySelector<HTMLElement>(`[data-card="${entries.length - 1}"]`);
-    if (!plane || !card) return;
-
-    const p = plane.getBoundingClientRect();
-    const c = card.getBoundingClientRect();
-    // card centre relative to the plane
-    const cx = c.left + c.width / 2 - (p.left + p.width / 2);
-    const cy = c.top + c.height / 2 - (p.top + p.height / 2);
-    // stay inside the screen on phones
-    const rx = Math.max(c.width / 2 + 8, Math.min(c.width / 2 + 34, window.innerWidth - 22 - (c.left + c.width / 2)));
-    const ry = c.height / 2 + 30;
-    // start the orbit at the point of the ellipse closest to the plane
-    const a0 = Math.atan2(-cy / ry, -cx / rx);
-
-    const N = 48;
-    const xs: number[] = [0], ys: number[] = [0], rots: number[] = [0];
-    const base = 135; // normal heading (pointing down the track)
-    let lastHeading = 90;
-    const unwrap = (h: number) => {
-      while (h - lastHeading > 180) h -= 360;
-      while (h - lastHeading < -180) h += 360;
-      lastHeading = h;
-      return h;
-    };
-    for (let k = 0; k <= N; k++) {
-      const a = a0 + (k / N) * Math.PI * 2; // clockwise on screen
-      xs.push(cx + rx * Math.cos(a));
-      ys.push(cy + ry * Math.sin(a));
-      const heading = (Math.atan2(ry * Math.cos(a), -rx * Math.sin(a)) * 180) / Math.PI;
-      rots.push(unwrap(heading) + 45 - base);
-    }
-    xs.push(0); ys.push(0); rots.push(Math.round(rots[rots.length - 1] / 360) * 360);
-
-    looping.current = true;
-    const opts = { duration: 2.6, ease: "easeInOut" as const };
-    animate(loopX, xs, opts);
-    animate(loopY, ys, opts);
-    animate(loopRot, rots, opts).then(() => {
-      loopRot.set(0);
-      looping.current = false;
-    });
+    animate(planeScale, [1, 1.55, 0.92, 1.12, 1], { duration: 1.1, ease: "easeOut" });
   }, [reached]);
 
   return (
@@ -174,7 +134,7 @@ export default function Timeline() {
         {/* Dashed track, marching dashes, and the solid trail the plane leaves */}
         <div className="tl-track absolute left-[7px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px]" aria-hidden />
         <motion.div
-          style={{ scaleY: progress }}
+          style={{ scaleY: clamped }}
           className="tl-trail absolute left-[7px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] origin-top"
           aria-hidden
         />
@@ -185,8 +145,8 @@ export default function Timeline() {
           className="absolute left-[8px] md:left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
           aria-hidden
         >
-          <motion.div ref={planeRef} style={{ x: loopX, y: loopY }} className="tl-plane">
-            <motion.div style={{ rotate: planeRotate }}>
+          <motion.div ref={planeRef} style={{ scale: planeScale }} className="tl-plane">
+            <motion.div style={{ rotate: planeTilt }}>
               <Plane size={18} strokeWidth={1.8} />
             </motion.div>
           </motion.div>
@@ -211,6 +171,13 @@ export default function Timeline() {
                   aria-hidden
                 >
                   {i < reached && <span key={`hit-${i}`} className="tl-hit" />}
+                  {/* final stop: bigger, double pulse */}
+                  {i === entries.length - 1 && reached === entries.length && arrivals > 0 && (
+                    <span key={`big-${arrivals}`} aria-hidden>
+                      <span className="tl-hit tl-hit--big" />
+                      <span className="tl-hit tl-hit--big tl-hit--late" />
+                    </span>
+                  )}
                 </span>
                 {/* Dashed connector from the dot to the card (desktop) */}
                 <span

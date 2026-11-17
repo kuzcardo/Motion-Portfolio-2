@@ -467,6 +467,12 @@ body.light-mode .card-cover {
   0% { transform: scale(1); opacity: 1; }
   100% { transform: scale(3.2); opacity: 0; }
 }
+.tl-hit--big { border-width: 2.5px; animation: tlHitBig 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; box-shadow: 0 0 18px rgba(233, 184, 114, 0.6); }
+.tl-hit--late { animation-delay: 0.35s; opacity: 0; }
+@keyframes tlHitBig {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(6.5); opacity: 0; }
+}
 .timeline-dot.is-reached { background: #E9B872; transition: background 0.3s ease; }
 .photo-frame { border-color: rgba(233, 184, 114, 0.3); }
 .photo-frame--hot { border-color: rgba(233, 184, 114, 0.7); }
