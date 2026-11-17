@@ -12,34 +12,37 @@ interface Project {
 }
 
 // Description + tools shown on the right side of each card
+const BASE = ["After Effects", "Premiere Pro"];
+// extra scroll (in viewport heights) after the last card so it rests in focus
+const STACK_TAIL = 0.5;
 const details: Record<number, { en: string; es: string; tags: string[] }> = {
   1: { en: "Story-driven animations that turn ideas into visual narratives — from brand stories to explainers, built frame by frame.",
        es: "Animaciones con narrativa que convierten ideas en historias visuales: desde historias de marca hasta explainers, construidas cuadro a cuadro.",
-       tags: ["After Effects", "Illustrator", "Premiere Pro"] },
+       tags: [...BASE, "Illustrator", "AI Image Generation"] },
   2: { en: "Type that moves with rhythm and intention — words timed to voice and music so every message lands.",
        es: "Tipografía que se mueve con ritmo e intención: palabras sincronizadas con la voz y la música para que cada mensaje impacte.",
-       tags: ["After Effects", "Illustrator"] },
+       tags: [...BASE, "Illustrator"] },
   3: { en: "Clean, Dan Koe–style animation: few elements, precise timing and plenty of negative space.",
        es: "Animación limpia al estilo Dan Koe: pocos elementos, timing preciso y mucho espacio negativo.",
-       tags: ["After Effects", "Illustrator"] },
+       tags: [...BASE] },
   4: { en: "Scroll-stopping vertical content and ads for brands like Cashea, Addnice and Mercado Libre.",
        es: "Contenido vertical y anuncios que frenan el scroll, para marcas como Cashea, Addnice y Mercado Libre.",
-       tags: ["After Effects", "Premiere Pro", "Photoshop"] },
+       tags: [...BASE, "Photoshop", "ElevenLabs", "Adobe Podcast", "AI Gen"] },
   6: { en: "Logo reveals and brand intros that give an identity its first heartbeat.",
        es: "Revelados de logo e intros de marca que le dan a una identidad su primer latido.",
-       tags: ["After Effects", "Illustrator"] },
+       tags: [...BASE] },
   7: { en: "Interface animations and product showcases — showing how an app feels, not just how it looks.",
        es: "Animaciones de interfaz y showcases de producto: muestran cómo se siente una app, no solo cómo se ve.",
-       tags: ["Figma", "Rive", "After Effects"] },
+       tags: [...BASE] },
   8: { en: "Looping, generative backgrounds for screens, events and stages.",
        es: "Fondos generativos en loop para pantallas, eventos y escenarios.",
-       tags: ["After Effects"] },
+       tags: [...BASE] },
   9: { en: "Longer edits — YouTube videos, interviews and event recaps, with pacing, sound design and motion graphics.",
        es: "Ediciones largas: videos de YouTube, entrevistas y resúmenes de eventos, con ritmo, diseño sonoro y motion graphics.",
-       tags: ["Premiere Pro", "After Effects"] },
+       tags: [...BASE, "ElevenLabs"] },
   10: { en: "Videos generated with AI models and finished with motion design.",
         es: "Videos generados con modelos de IA y terminados con motion design.",
-        tags: ["Higgsfield", "Runway", "Seedream", "Remotion"] },
+        tags: [...BASE, "Higgsfield", "Runway", "Seedream", "Remotion", "Magnific", "Claude Code", "Antigravity", "Codex"] },
 };
 
 const projects: Project[] = [
@@ -165,9 +168,29 @@ export default function ProjectGrid() {
   // Stacking cards: progress through the whole stack drives scaling + the live counter
   const stackRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start start", "end end"] });
+  // Where each card lands (0..1 of the stack's scroll). Each sticky slot is H tall
+  // (86vh / 88vh on md) and the stack ends with a spacer, so card i settles at
+  // i*H / (n*H + spacer - 1vh). Measured from the viewport so every card —
+  // including the last ones — gets the same time in focus.
+  const [settle, setSettle] = useState<number[]>(() => projects.map((_, i) => i / projects.length));
+  useEffect(() => {
+    const calc = () => {
+      const n = projects.length;
+      const h = window.innerWidth >= 768 ? 0.88 : 0.86;
+      const range = n * h + STACK_TAIL - 1;
+      setSettle(projects.map((_, i) => (i * h) / range));
+    };
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, []);
   const [current, setCurrent] = useState(0);
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const i = Math.min(projects.length - 1, Math.max(0, Math.floor(v * projects.length)));
+    // a card becomes "the top one" once the next one is more than half-way in
+    let i = 0;
+    for (let k = 1; k < settle.length; k++) {
+      if (v >= settle[k] - (settle[k] - settle[k - 1]) * 0.5) i = k;
+    }
     setCurrent((prev) => (prev === i ? prev : i));
   });
 
@@ -204,15 +227,18 @@ export default function ProjectGrid() {
               index={index}
               total={projects.length}
               progress={scrollYProgress}
+              settle={settle}
               isTop={index === current}
               title={projTitle(project.title)}
-              category={projCat(project.category)}
+              category={language === "es" ? "Estilo" : "Style"}
               viewLabel={t('projects.view')}
               desc={details[project.id]?.[language] ?? ""}
               tags={details[project.id]?.tags ?? []}
               onOpen={() => handleProjectClick(project)}
             />
           ))}
+          {/* tail: lets the last cards rest in focus before the stack scrolls away */}
+          <div aria-hidden style={{ height: `${STACK_TAIL * 100}vh` }} />
         </div>
       </div>
 
@@ -288,16 +314,18 @@ export default function ProjectGrid() {
 }
 
 function StackCard({
-  project, index, total, progress, isTop, title, category, viewLabel, desc, tags, onOpen,
+  project, index, total, progress, settle, isTop, title, category, viewLabel, desc, tags, onOpen,
 }: {
-  project: Project; index: number; total: number; progress: MotionValue<number>; isTop: boolean;
+  project: Project; index: number; total: number; progress: MotionValue<number>; settle: number[]; isTop: boolean;
   title: string; category: string; viewLabel: string; desc: string; tags: string[]; onOpen: () => void; key?: string | number;
 }) {
   const isLast = index === total - 1;
-  // once the next card starts covering this one, shrink it a little and dim it
-  const start = index / total;
-  const scale = useTransform(progress, [start, 1], [1, isLast ? 1 : 1 - (total - 1 - index) * 0.025]);
-  const dim = useTransform(progress, [start + 0.6 / total, Math.min(1, start + 1.1 / total)], [0, isLast ? 0 : 0.6]);
+  // from the moment this card lands until the next one fully covers it: shrink a little and dim
+  const start = settle[index];
+  const next = isLast ? 1 : settle[index + 1];
+  const end = Math.min(1, settle[total - 1] ?? 1);
+  const scale = useTransform(progress, [start, Math.max(start + 0.001, end)], [1, isLast ? 1 : 1 - (total - 1 - index) * 0.025]);
+  const dim = useTransform(progress, [start + (next - start) * 0.5, Math.max(start + 0.002, next)], [0, isLast ? 0 : 0.6]);
 
   return (
     <div className="sticky top-0 h-[86vh] md:h-[88vh] flex items-start justify-center">
