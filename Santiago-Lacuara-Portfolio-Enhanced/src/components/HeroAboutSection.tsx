@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import Timeline from "./Timeline";
 import AboutPhoto from "./AboutPhoto";
@@ -51,8 +51,13 @@ export default function HeroAboutSection() {
     };
   }, []);
 
+  const { language } = useLanguage();
   const subtitleText = t('hero.subtitle');
   const words = subtitleText.split(" ");
+  // The long intro delay only applies on first load; switching language replays instantly.
+  const introDone = useRef(false);
+  useEffect(() => { const tm = setTimeout(() => { introDone.current = true; }, 4500); return () => clearTimeout(tm); }, []);
+  const subDelay = introDone.current ? 0 : 3.9;
 
   return (
     <>
@@ -86,10 +91,10 @@ export default function HeroAboutSection() {
           <div className="flex gap-2 md:gap-3 flex-wrap justify-center px-4">
             {words.map((word, i) => (
               <motion.span
-                key={i}
+                key={`${language}-${i}`}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 3.9 + (i * 0.08), duration: 0.8, ease: [0.215, 0.61, 0.355, 1] }}
+                transition={{ delay: subDelay + (i * 0.08), duration: 0.8, ease: [0.215, 0.61, 0.355, 1] }}
                 className="text-[9px] md:text-[10px] font-grotesk font-light uppercase tracking-[0.4em] md:tracking-[0.6em] text-white inline-block"
               >
                 {word}

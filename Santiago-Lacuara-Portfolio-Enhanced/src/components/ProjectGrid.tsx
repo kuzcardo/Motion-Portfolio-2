@@ -87,7 +87,13 @@ export default function ProjectGrid() {
   const { t, language } = useLanguage();
   // Bilingual project titles (only the ones that differ per language)
   const titleES: Record<string, string> = {
+    "Motion Narrative": "Narrativa Animada",
+    "Kinetic Typography": "Tipografía Cinética",
     Minimalist: "Minimalista",
+    "Social Media": "Redes Sociales",
+    "Logo animation": "Animación de Logos",
+    "UX UI": "UX UI",
+    "Dynamic Backgrounds": "Fondos Dinámicos",
     "Long Form": "Formato Largo",
     "AI Gen": "Generado con IA",
   };

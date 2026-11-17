@@ -143,19 +143,23 @@ export default function Navbar() {
 
           {/* Brand Text with Stagger */}
           <a href="#" className="relative z-10 flex-1">
-            <motion.div 
+            <motion.div
+              key={language}
               variants={brandVariants}
               initial="hidden"
               animate="visible"
               className="text-[13px] font-light tracking-[0.3em] uppercase flex flex-wrap"
             >
-              {brandText.split("").map((char, index) => (
-                <motion.span
-                  key={index}
-                  variants={letterVariants}
-                >
-                  {char === " " ? "\u00A0" : char}
-                </motion.span>
+              {/* letters animate in, but each word stays together so it never breaks mid-word */}
+              {brandText.split(" ").map((word, w, all) => (
+                <span key={`${language}-${w}`} className="inline-flex whitespace-nowrap">
+                  {word.split("").map((char, index) => (
+                    <motion.span key={index} variants={letterVariants}>
+                      {char}
+                    </motion.span>
+                  ))}
+                  {w < all.length - 1 && <span>{"\u00A0"}</span>}
+                </span>
               ))}
             </motion.div>
           </a>

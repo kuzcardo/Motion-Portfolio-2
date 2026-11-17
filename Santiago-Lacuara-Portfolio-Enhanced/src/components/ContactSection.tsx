@@ -105,7 +105,7 @@ export default function ContactSection() {
 
                     <span className="relative z-10 flex flex-col min-w-0">
                       <span className="text-[9px] font-grotesk uppercase tracking-[0.4em] text-white/40 contact-gate__muted">
-                        {String(i + 1).padStart(2, "0")} — Gate
+                        {String(i + 1).padStart(2, "0")} — {t("contact.gate")}
                       </span>
                       <span className="text-lg md:text-xl font-poppins font-bold uppercase tracking-tight leading-tight">{label}</span>
                       <span className="text-xs font-grotesk font-light text-white/60 truncate contact-gate__muted">

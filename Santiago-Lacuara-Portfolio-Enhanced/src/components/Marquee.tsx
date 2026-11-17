@@ -1,17 +1,16 @@
+import { useLanguage } from "../context/LanguageContext";
+
 // Design style names (matches the project styles in the grid)
-const ITEMS = [
-  "Motion Narrative",
-  "Kinetic Typography",
-  "Minimalist",
-  "Social Media",
-  "Logo Animation",
-  "UX / UI",
-  "Dynamic Backgrounds",
-];
+const ITEMS = {
+  en: ["Motion Narrative", "Kinetic Typography", "Minimalist", "Social Media", "Logo Animation", "UX / UI", "Dynamic Backgrounds", "Long Form", "AI Gen"],
+  es: ["Narrativa Animada", "Tipografía Cinética", "Minimalista", "Redes Sociales", "Animación de Logos", "UX / UI", "Fondos Dinámicos", "Formato Largo", "Generado con IA"],
+};
 
 export default function Marquee() {
   // Repeat the list twice inside each track so the loop is seamless.
-  const row = [...ITEMS, ...ITEMS];
+  const { language } = useLanguage();
+  const items = ITEMS[language];
+  const row = [...items, ...items];
 
   return (
     <section
