@@ -33,6 +33,8 @@ function AppContent() {
 
   // Parallax: the global grid drifts slower than the page on scroll.
   useEffect(() => {
+    // phones: static grid (one less thing moving on every scroll frame)
+    if (window.matchMedia("(max-width: 767px)").matches) return;
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;

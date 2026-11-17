@@ -2,7 +2,7 @@ import { motion, animate, useInView, useMotionValue, useMotionTemplate, useSprin
 import { useEffect, useRef, useState } from "react";
 import { MousePointer2 } from "lucide-react";
 
-const SRC = "https://i.ibb.co/1YXbWWRj/retratardo.png";
+const SRC = "/about.webp";
 const START = 0.2; // the frame starts at 20% of its final size, pinned to the top-left corner
 const PAD = 16;    // distance from the photo to the dashed frame / gold corners
 

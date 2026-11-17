@@ -237,6 +237,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
+            style={{ background: "rgba(8, 8, 8, 0.92)" }}
             className="fixed top-4 left-4 right-4 z-[110] liquid-glass rounded-3xl p-8 flex flex-col items-center gap-8 border border-white/10 shadow-2xl"
           >
             <button 

@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500&family=Syne:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -653,11 +652,15 @@ body.light-mode .contact-gate__icon, body.light-mode .contact-gate__arrow { colo
 /* each card gets its own GPU layer, so scaling it while scrolling never repaints it */
 .stack-card { will-change: transform; transform: translateZ(0); backface-visibility: hidden; }
 @media (max-width: 767px) {
-  /* mobile: static dashes (the marching stroke repaints every frame) */
+  /* Phones (iPhone especially): keep scrolling on the compositor only.
+     - static dashes on the top card (a marching stroke repaints every frame)
+     - no full-screen grain layer on top of everything (barely visible on a phone anyway)
+     - glow blobs without a blur filter (they're radial gradients, already soft) and still
+     - no per-card GPU layers (no transforms run on the cards on mobile) */
   .stack-card__stroke.is-top rect { animation: none; }
-  /* the film grain stays, but frozen */
-  .grain-overlay { animation: none; }
-  .bg-blobs .gb { filter: blur(70px); }
+  .grain-overlay { display: none; }
+  .bg-blobs .gb { filter: none; animation: none; opacity: 0.35; }
+  .stack-card { will-change: auto; transform: none; }
 }
 .stack-card__panel {
   background:

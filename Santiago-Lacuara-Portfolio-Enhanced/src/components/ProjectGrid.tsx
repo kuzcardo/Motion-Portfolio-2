@@ -14,7 +14,7 @@ interface Project {
 // Description + tools shown on the right side of each card
 const BASE = ["After Effects", "Premiere Pro"];
 // extra scroll (in viewport heights) after the last card so it rests in focus
-const STACK_TAIL = 0.5;
+const STACK_TAIL = 0.35;
 const details: Record<number, { en: string; es: string; tags: string[] }> = {
   1: { en: "Story-driven animation that turns an idea into a visual narrative. I write the beats, design every scene and animate it frame by frame, so brand stories, explainers and launches feel like a short film, not a slideshow — with illustration, AI imagery and sound carrying the message.",
        es: "Animación con narrativa que convierte una idea en una historia visual. Escribo los momentos clave, diseño cada escena y la animo cuadro a cuadro, para que historias de marca, explainers y lanzamientos se sientan como un cortometraje y no como una presentación, con ilustración, imágenes de IA y sonido contando el mensaje.",
@@ -165,57 +165,47 @@ export default function ProjectGrid() {
     return () => window.removeEventListener('keydown', onKey);
   }, [selectedProject]);
 
-  // Stacking cards: progress through the whole stack drives scaling + the live counter
+  // Stacking cards. Everything is measured in real pixels from the DOM (never from
+  // `vh`): on iPhone the Safari / in-app browser bars change the visible height, so
+  // vh-based maths drifted and cards stayed dimmed while on top.
   const stackRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start start", "end end"] });
-  // Where each card lands (0..1 of the stack's scroll). Each sticky slot is H tall
-  // (86vh / 88vh on md) and the stack ends with a spacer, so card i settles at
-  // i*H / (n*H + spacer - 1vh). Measured from the viewport so every card —
-  // including the last ones — gets the same time in focus.
-  const [settle, setSettle] = useState<number[]>(() => projects.map((_, i) => i / projects.length));
+  const { scrollY } = useScroll();
+  const isMobile = useIsMobile();
+  const [metrics, setMetrics] = useState({ top: 0, slot: 1 });
   useEffect(() => {
-    const calc = () => {
-      const n = projects.length;
-      const h = window.innerWidth >= 768 ? 0.88 : 0.86;
-      const range = n * h + STACK_TAIL - 1;
-      setSettle(projects.map((_, i) => (i * h) / range));
-    };
-    calc();
-    window.addEventListener("resize", calc);
-    return () => window.removeEventListener("resize", calc);
-  }, []);
-  const [current, setCurrent] = useState(0);
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    // a card becomes "the top one" once the next one is more than half-way in
-    let i = 0;
-    for (let k = 1; k < settle.length; k++) {
-      if (v >= settle[k] - (settle[k] - settle[k - 1]) * 0.5) i = k;
-    }
-    setCurrent((prev) => (prev === i ? prev : i));
-  });
-
-  // Style index: visible while the stack is on screen; jumps straight to a card
-  const [inStack, setInStack] = useState(false);
-  useEffect(() => {
-    const check = () => {
+    const measure = () => {
       const el = stackRef.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const on = r.top < vh * 0.5 && r.bottom > vh * 0.6;
-      setInStack((p) => (p === on ? p : on));
+      const slot = el?.children[0] as HTMLElement | undefined;
+      if (!el || !slot) return;
+      const top = Math.round(el.getBoundingClientRect().top + window.scrollY);
+      const h = slot.offsetHeight || 1;
+      setMetrics((m) => (m.top === top && m.slot === h ? m : { top, slot: h }));
     };
-    check();
-    window.addEventListener("scroll", check, { passive: true });
-    window.addEventListener("resize", check);
-    return () => { window.removeEventListener("scroll", check); window.removeEventListener("resize", check); };
+    measure();
+    // layout above the stack can change (photo, fonts, timeline) → re-measure
+    const ro = new ResizeObserver(measure);
+    ro.observe(document.body);
+    window.addEventListener("resize", measure);
+    return () => { ro.disconnect(); window.removeEventListener("resize", measure); };
   }, []);
+
+  // which card is on top: the next one takes over once it's half-way in
+  const [current, setCurrent] = useState(0);
+  const [inStack, setInStack] = useState(false);
+  const update = (y: number) => {
+    const rel = (y - metrics.top) / metrics.slot;
+    const i = Math.min(projects.length - 1, Math.max(0, Math.floor(rel + 0.5)));
+    setCurrent((prev) => (prev === i ? prev : i));
+    const vh = window.innerHeight;
+    const stackH = stackRef.current?.offsetHeight ?? 0;
+    const on = y + vh * 0.5 > metrics.top && y + vh * 0.6 < metrics.top + stackH;
+    setInStack((p) => (p === on ? p : on));
+  };
+  useMotionValueEvent(scrollY, "change", update);
+  useEffect(() => { update(window.scrollY); }, [metrics]);
+
   const jumpTo = (i: number) => {
-    const el = stackRef.current;
-    const slot = el?.children[0] as HTMLElement | undefined;
-    if (!el || !slot) return;
-    const top = el.getBoundingClientRect().top + window.scrollY + i * slot.offsetHeight + 2;
-    window.scrollTo({ top, behavior: "smooth" });
+    window.scrollTo({ top: metrics.top + i * metrics.slot + 2, behavior: "smooth" });
   };
 
   const handleProjectClick = (project: Project) => {
@@ -223,7 +213,7 @@ export default function ProjectGrid() {
   };
 
   return (
-    <section id="work" className="relative py-24 md:py-40 px-4 md:px-12 overflow-x-clip">
+    <section id="work" className="relative pt-24 pb-6 md:py-40 px-4 md:px-12 overflow-x-clip">
       <div className="max-w-screen-2xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0 }}
@@ -250,9 +240,11 @@ export default function ProjectGrid() {
               project={project}
               index={index}
               total={projects.length}
-              progress={scrollYProgress}
-              settle={settle}
+              scrollY={scrollY}
+              metrics={metrics}
+              lite={isMobile}
               isTop={index === current}
+              isPast={index < current}
               title={projTitle(project.title)}
               category={language === "es" ? "Estilo" : "Style"}
               viewLabel={t('projects.view')}
@@ -269,7 +261,7 @@ export default function ProjectGrid() {
       <StyleIndex
         titles={projects.map((p) => projTitle(p.title))}
         current={current}
-        visible={inStack && !selectedProject}
+        visible={inStack && !selectedProject && !isMobile}
         label={t('projects.title')}
         onJump={jumpTo}
       />
@@ -350,27 +342,43 @@ export default function ProjectGrid() {
   );
 }
 
+// true on phones (≤767px). Read once and on resize — never per scroll frame.
+function useIsMobile() {
+  const q = "(max-width: 767px)";
+  const [m, setM] = useState(() => typeof window !== "undefined" && window.matchMedia(q).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(q);
+    const on = () => setM(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return m;
+}
+
 function StackCard({
-  project, index, total, progress, settle, isTop, title, category, viewLabel, desc, tags, onOpen,
+  project, index, total, scrollY, metrics, lite, isTop, isPast, title, category, viewLabel, desc, tags, onOpen,
 }: {
-  project: Project; index: number; total: number; progress: MotionValue<number>; settle: number[]; isTop: boolean;
+  project: Project; index: number; total: number; scrollY: MotionValue<number>; metrics: { top: number; slot: number };
+  lite: boolean; isTop: boolean; isPast: boolean;
   title: string; category: string; viewLabel: string; desc: string; tags: string[]; onOpen: () => void; key?: string | number;
 }) {
   const isLast = index === total - 1;
-  // from the moment this card lands until the next one fully covers it: shrink a little and dim
-  const start = settle[index];
-  const next = isLast ? 1 : settle[index + 1];
-  const end = Math.min(1, settle[total - 1] ?? 1);
-  const scale = useTransform(progress, [start, Math.max(start + 0.001, end)], [1, isLast ? 1 : 1 - (total - 1 - index) * 0.025]);
-  const dim = useTransform(progress, [start + (next - start) * 0.5, Math.max(start + 0.002, next)], [0, isLast ? 0 : 0.6]);
+  // Desktop: from the moment this card lands until the next one covers it, shrink a
+  // little and dim — driven by scroll. Mobile ("lite"): nothing runs per frame; the
+  // sticky stacking is native (compositor) and the dim is a CSS transition.
+  const start = metrics.top + index * metrics.slot;
+  const next = start + metrics.slot;
+  const end = metrics.top + (total - 1) * metrics.slot;
+  const scale = useTransform(scrollY, [start, Math.max(start + 1, end)], [1, isLast ? 1 : 1 - (total - 1 - index) * 0.025]);
+  const dim = useTransform(scrollY, [start + metrics.slot * 0.5, next], [0, isLast ? 0 : 0.6]);
 
   return (
-    <div className="sticky top-0 h-[86vh] md:h-[88vh] flex items-start justify-center">
+    <div className="sticky top-0 h-[86svh] md:h-[88vh] flex items-start justify-center">
       <motion.div
-        style={{ scale, top: `calc(12vh + ${index * 14}px)` }}
+        style={lite ? { top: `calc(10svh + ${index * 10}px)` } : { scale, top: `calc(12vh + ${index * 14}px)` }}
         onClick={onOpen}
         data-card-id={project.id}
-        className="stack-card cursor-grow group relative origin-top w-full max-w-6xl h-[70vh] md:h-[66vh] rounded-3xl overflow-hidden cursor-pointer bg-zinc-900 grid grid-rows-[36%_1fr] md:grid-rows-1 md:grid-cols-[1.1fr_1fr] md:shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)]"
+        className="stack-card cursor-grow group relative origin-top w-full max-w-6xl h-[72svh] md:h-[66vh] rounded-3xl overflow-hidden cursor-pointer bg-zinc-900 grid grid-rows-[36%_1fr] md:grid-rows-1 md:grid-cols-[1.1fr_1fr] md:shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)]"
       >
         {/* Left: image */}
         <div className="relative overflow-hidden">
@@ -378,12 +386,12 @@ function StackCard({
             <img
               src={project.image}
               alt={project.title}
-              loading={index < 2 ? "eager" : "lazy"}
+              loading="eager"
               decoding="async"
-              {...(index === 0 ? { fetchPriority: "high" as const } : {})}
-              // mobile: opacity only (no grayscale filter / zoom — those repaint the whole image while scrolling)
+              fetchPriority={index < 2 ? "high" : "low"}
+              // mobile: always fully visible — no filter, zoom or fade tied to scroll (iOS runs JS late during momentum scroll)
               className={`stack-card__img absolute inset-0 w-full h-full object-cover transition-[opacity,transform,filter] duration-700 ease-out
-                ${isTop ? "opacity-100 md:grayscale-0 md:scale-100" : "opacity-50 md:opacity-60 md:grayscale md:scale-105"} md:group-hover:scale-[1.04]`}
+                ${isTop ? "md:opacity-100 md:grayscale-0 md:scale-100" : "md:opacity-60 md:grayscale md:scale-105"} md:group-hover:scale-[1.04]`}
               referrerPolicy="no-referrer"
             />
           ) : (
@@ -435,7 +443,11 @@ function StackCard({
         </svg>
 
         {/* dims as the next card slides over */}
-        <motion.div style={{ opacity: dim }} className="absolute inset-0 bg-black pointer-events-none z-20 will-change-[opacity]" />
+        {lite ? (
+          <div className={`absolute inset-0 bg-black pointer-events-none z-20 transition-opacity duration-500 ${isPast ? "opacity-60" : "opacity-0"}`} />
+        ) : (
+          <motion.div style={{ opacity: dim }} className="absolute inset-0 bg-black pointer-events-none z-20" />
+        )}
       </motion.div>
     </div>
   );
