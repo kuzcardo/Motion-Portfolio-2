@@ -11,6 +11,37 @@ interface Project {
   videos?: string[]; // YouTube video IDs
 }
 
+// Description + tools shown on the right side of each card
+const details: Record<number, { en: string; es: string; tags: string[] }> = {
+  1: { en: "Story-driven animations that turn ideas into visual narratives — from brand stories to explainers, built frame by frame.",
+       es: "Animaciones con narrativa que convierten ideas en historias visuales: desde historias de marca hasta explainers, construidas cuadro a cuadro.",
+       tags: ["After Effects", "Illustrator", "Premiere Pro"] },
+  2: { en: "Type that moves with rhythm and intention — words timed to voice and music so every message lands.",
+       es: "Tipografía que se mueve con ritmo e intención: palabras sincronizadas con la voz y la música para que cada mensaje impacte.",
+       tags: ["After Effects", "Illustrator"] },
+  3: { en: "Clean, Dan Koe–style animation: few elements, precise timing and plenty of negative space.",
+       es: "Animación limpia al estilo Dan Koe: pocos elementos, timing preciso y mucho espacio negativo.",
+       tags: ["After Effects", "Illustrator"] },
+  4: { en: "Scroll-stopping vertical content and ads for brands like Cashea, Addnice and Mercado Libre.",
+       es: "Contenido vertical y anuncios que frenan el scroll, para marcas como Cashea, Addnice y Mercado Libre.",
+       tags: ["After Effects", "Premiere Pro", "Photoshop"] },
+  6: { en: "Logo reveals and brand intros that give an identity its first heartbeat.",
+       es: "Revelados de logo e intros de marca que le dan a una identidad su primer latido.",
+       tags: ["After Effects", "Illustrator"] },
+  7: { en: "Interface animations and product showcases — showing how an app feels, not just how it looks.",
+       es: "Animaciones de interfaz y showcases de producto: muestran cómo se siente una app, no solo cómo se ve.",
+       tags: ["Figma", "Rive", "After Effects"] },
+  8: { en: "Looping, generative backgrounds for screens, events and stages.",
+       es: "Fondos generativos en loop para pantallas, eventos y escenarios.",
+       tags: ["After Effects"] },
+  9: { en: "Longer edits — YouTube videos, interviews and event recaps, with pacing, sound design and motion graphics.",
+       es: "Ediciones largas: videos de YouTube, entrevistas y resúmenes de eventos, con ritmo, diseño sonoro y motion graphics.",
+       tags: ["Premiere Pro", "After Effects"] },
+  10: { en: "Videos generated with AI models and finished with motion design.",
+        es: "Videos generados con modelos de IA y terminados con motion design.",
+        tags: ["Higgsfield", "Runway", "Seedream", "Remotion"] },
+};
+
 const projects: Project[] = [
   {
     id: 1,
@@ -175,6 +206,8 @@ export default function ProjectGrid() {
               title={projTitle(project.title)}
               category={projCat(project.category)}
               viewLabel={t('projects.view')}
+              desc={details[project.id]?.[language] ?? ""}
+              tags={details[project.id]?.tags ?? []}
               onOpen={() => handleProjectClick(project)}
             />
           ))}
@@ -261,66 +294,82 @@ export default function ProjectGrid() {
 }
 
 function StackCard({
-  project, index, total, progress, isTop, title, category, viewLabel, onOpen,
+  project, index, total, progress, isTop, title, category, viewLabel, desc, tags, onOpen,
 }: {
   project: Project; index: number; total: number; progress: MotionValue<number>; isTop: boolean;
-  title: string; category: string; viewLabel: string; onOpen: () => void; key?: string | number;
+  title: string; category: string; viewLabel: string; desc: string; tags: string[]; onOpen: () => void; key?: string | number;
 }) {
   const isLast = index === total - 1;
   // once the next card starts covering this one, shrink it a little and dim it
   const start = index / total;
   const scale = useTransform(progress, [start, 1], [1, isLast ? 1 : 1 - (total - 1 - index) * 0.025]);
-  const dim = useTransform(progress, [start, Math.min(1, start + 1 / total)], [0, isLast ? 0 : 0.6]);
+  const dim = useTransform(progress, [start + 0.6 / total, Math.min(1, start + 1.1 / total)], [0, isLast ? 0 : 0.6]);
 
   return (
-    <div className="sticky top-0 h-[78vh] md:h-[88vh] flex items-start justify-center">
+    <div className="sticky top-0 h-[86vh] md:h-[88vh] flex items-start justify-center">
       <motion.div
-        style={{ scale, top: `calc(13vh + ${index * 14}px)` }}
+        style={{ scale, top: `calc(12vh + ${index * 14}px)` }}
         onClick={onOpen}
         data-card-id={project.id}
-        className="stack-card cursor-grow group relative origin-top w-full max-w-6xl h-[56vh] md:h-[66vh] rounded-3xl overflow-hidden cursor-pointer bg-zinc-900 shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)]"
+        className="stack-card cursor-grow group relative origin-top w-full max-w-6xl h-[70vh] md:h-[62vh] rounded-3xl overflow-hidden cursor-pointer bg-zinc-900 grid grid-rows-[42%_1fr] md:grid-rows-1 md:grid-cols-[1.35fr_1fr] shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)]"
       >
-        {project.image ? (
-          <img
-            src={project.image}
-            alt={project.title}
-            className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-out
-              ${isTop ? "grayscale-0 opacity-90 scale-100" : "grayscale opacity-60 scale-105"} group-hover:scale-[1.03]`}
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <div className={`absolute inset-0 card-cover ${isTop ? "is-active" : ""}`}>
-            <span className="card-cover__word font-display font-bold uppercase tracking-tighter">
-              {project.title === "AI Gen" ? "AI" : "16:9"}
+        {/* Left: image */}
+        <div className="relative overflow-hidden">
+          {project.image ? (
+            <img
+              src={project.image}
+              alt={project.title}
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-out
+                ${isTop ? "grayscale-0 opacity-100 scale-100" : "grayscale opacity-60 scale-105"} group-hover:scale-[1.04]`}
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className={`absolute inset-0 card-cover ${isTop ? "is-active" : ""}`}>
+              <span className="card-cover__word font-display font-bold uppercase tracking-tighter">
+                {project.title === "AI Gen" ? "AI" : "16:9"}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Right: info panel */}
+        <div className="stack-card__panel relative flex flex-col p-6 md:p-10 min-h-0">
+          <div className="flex items-center gap-3">
+            <span className="stack-card__pill px-3 py-1 rounded-full text-[9px] md:text-[10px] font-grotesk font-medium uppercase tracking-[0.25em]">
+              {category}
+            </span>
+            <span className="text-[10px] font-grotesk tracking-[0.3em] text-white/40">
+              {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
             </span>
           </div>
-        )}
 
-        {/* readability gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/30 pointer-events-none" />
+          <h3 className="mt-4 md:mt-6 text-3xl md:text-5xl font-poppins font-bold tracking-tight leading-[1.02]">
+            {title}
+          </h3>
+          <p className="mt-3 md:mt-5 text-sm md:text-base font-light leading-relaxed text-white/60 line-clamp-3 md:line-clamp-4">
+            {desc}
+          </p>
+
+          <div className="mt-auto pt-5">
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <span key={tag} className="stack-card__tag px-3 py-1 rounded-full text-[10px] md:text-[11px] font-grotesk text-white/50">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <div className="stack-card__divider my-4 md:my-6" />
+            <span className="inline-flex items-center gap-2 text-sm md:text-base font-grotesk text-white/90">
+              {viewLabel}
+              <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" style={{ color: "#E9B872" }}>↗</span>
+            </span>
+          </div>
+        </div>
 
         {/* dashed amber stroke, marching on the card that's on top */}
         <svg className={`stack-card__stroke ${isTop ? "is-top" : ""}`} aria-hidden>
           <rect x="0.75" y="0.75" rx="24" ry="24" />
         </svg>
-
-        {/* top row */}
-        <div className="absolute top-5 left-5 right-5 md:top-7 md:left-8 md:right-8 flex items-center justify-between z-10 text-[10px] font-grotesk tracking-[0.35em] uppercase">
-          <span className="text-white/70 text-shadow-strong">
-            <span style={{ color: "#E9B872" }}>{String(index + 1).padStart(2, "0")}</span> / {String(total).padStart(2, "0")}
-          </span>
-          <span className="text-shadow-strong" style={{ color: "#E9B872" }}>{category}</span>
-        </div>
-
-        {/* bottom row */}
-        <div className="absolute left-5 right-5 bottom-5 md:left-8 md:right-8 md:bottom-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4 z-10">
-          <h3 className="text-4xl sm:text-5xl md:text-7xl font-poppins font-bold uppercase tracking-tighter leading-[0.9] text-shadow-strong">
-            {title}
-          </h3>
-          <span className="stack-card__cta self-start md:self-auto inline-flex items-center gap-3 rounded-full px-5 py-3 text-[10px] font-grotesk uppercase tracking-[0.35em] whitespace-nowrap">
-            {viewLabel} <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1">→</span>
-          </span>
-        </div>
 
         {/* dims as the next card slides over */}
         <motion.div style={{ opacity: dim }} className="absolute inset-0 bg-black pointer-events-none z-20" />
