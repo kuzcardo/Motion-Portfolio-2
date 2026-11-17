@@ -693,3 +693,11 @@ body.light-mode .stack-card__tag, body.light-mode .stack-card__divider { border-
 @media (prefers-reduced-motion: reduce) {
   .stack-card__stroke.is-top rect { animation: none; }
 }
+
+/* lightweight YouTube thumbnails in the reel modal */
+.lite-yt__play {
+  color: #050505; background: #E9B872;
+  box-shadow: 0 0 0 6px rgba(233, 184, 114, 0.18), 0 8px 30px rgba(0, 0, 0, 0.5);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group\/yt:hover .lite-yt__play { transform: translate(-50%, -50%) scale(1.12); }

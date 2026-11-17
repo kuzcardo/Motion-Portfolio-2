@@ -47,63 +47,65 @@ const projects: Project[] = [
     id: 1,
     title: "Motion Narrative",
     category: "Animation",
-    image: "/motion-narrative.png",
+    image: "/covers/motion-narrative.webp",
     videos: ["Sq8HyEhXAYM", "ZFhZstN-gV0", "rYUx7LVM_iw","6-GJIqHH7wg", "zYzLro-d5jo"]
   },
   {
     id: 2,
     title: "Kinetic Typography",
     category: "Typography",
-    image: "https://i.ibb.co/S7KZzZ3K/ee.jpg",
+    image: "/covers/kinetic.webp",
     videos: ["Rc0yG9p9-ns", "PpMRNkPnA6o", "LuYrlKh2_Lo"]
   },
   {
     id: 3,
     title: "Minimalist",
     category: "Style",
-    image: "https://i.ibb.co/hxks1nmf/fddd.jpg",
+    image: "/covers/minimalist.webp",
     videos: ["PTHEPM34wlk", "PgOQ2mEBIFw", "20b8lFZ3I9c", "NTON1b1vmeI"]
   },
   {
     id: 4,
     title: "Social Media",
     category: "Content",
-    image: "/social-media.png",
+    image: "/covers/social-media.webp",
     videos: ["3BxmxXZetrQ", "LoIoU1KINDY", "WhpoBDGP3Nc", "20b8lFZ3I9c", "_vw2Ws0V5k8", "ScWMtJoviDk", "sgKGJz_Nrbw", "YrATij0ilZY", "F40p_FA9BnU", "x4VkU7qg_LQ", "bBcI5DwbNrw", "s0AvuRQP16M","c8RDT3T0qNY","rmQQdkXtuTE","ZsfVYNSwr4A","LfhWfHBPOMU","A8VsAxeQFkI","U6O9YYA4-3c"]
   },
   {
     id: 6,
     title: "Logo animation",
     category: "Branding",
-    image: "/logo-animation.png",
+    image: "/covers/logo-animation.webp",
     videos: ["YOyoXkFTp50", "gKfQuRYIzS0", "36Zd44weTmA", "4YD__Ie-ghY", "Ua3sqZmoKrQ", "eOTPjy-Fow8", "rZVFAHm61UM", "DOMCyp-lHq0"]
   },
   {
     id: 7,
     title: "UX UI",
     category: "Interface",
-    image: "/ux-ui.png",
+    image: "/covers/ux-ui.webp",
     videos: ["09rOZHMihbc", "ajPRSX3PAgk", "vxdvbLCZn5U", "8N2LEo9ysXc", "F40p_FA9BnU", "x4VkU7qg_LQ", "zYzLro-d5jo"]
   },
   {
     id: 8,
     title: "Dynamic Backgrounds",
     category: "Generative",
-    image: "https://i.ibb.co/G4WtH9Vz/image.jpg",
+    image: "/covers/dynamic.webp",
     videos: ["2_jLrn3C_rk", "PFzDJlHQ35o", "YIgjFZhLYd0", "OJUA6cSnMI8", "-iWsnjFEJu0", "k2wqBYzhlfs", "3AkLAKfi98I"]
   },
   {
     id: 9,
     title: "Long Form",
     category: "Video Editing",
-    // TODO: add a cover image + YouTube IDs. Long videos are 16:9 by default.
+    image: "/covers/long-form.webp",
+    // TODO: add YouTube IDs. Long videos are 16:9 by default.
     videos: []
   },
   {
     id: 10,
     title: "AI Gen",
     category: "AI Video",
-    // TODO: add a cover image + YouTube IDs. Add horizontal ones to the isHorizontal list.
+    image: "/covers/ai-gen.webp",
+    // TODO: add YouTube IDs. Add horizontal ones to the horizontalIds list.
     videos: []
   }
 ];
@@ -271,15 +273,7 @@ export default function ProjectGrid() {
                         key={videoId + idx}
                         className={`${isHorizontal ? `aspect-video col-span-2 md:col-span-3 ${lone ? 'lg:col-span-4' : 'lg:col-span-2'}` : 'aspect-[9/16]'} rounded-xl overflow-hidden bg-black/50 border border-white/5 relative group`}
                       >
-                        <iframe
-                          className="absolute inset-0 w-full h-full"
-                          src={`https://www.youtube.com/embed/${videoId}?rel=0`}
-                          title={`${selectedProject.title} video ${idx + 1}`}
-                          loading="lazy"
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        ></iframe>
+                        <LiteYouTube id={videoId} title={`${selectedProject.title} video ${idx + 1}`} />
                       </div>
                     );
                   });
@@ -319,6 +313,9 @@ function StackCard({
             <img
               src={project.image}
               alt={project.title}
+              loading={index < 2 ? "eager" : "lazy"}
+              decoding="async"
+              {...(index === 0 ? { fetchPriority: "high" as const } : {})}
               className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-out
                 ${isTop ? "grayscale-0 opacity-100 scale-100" : "grayscale opacity-60 scale-105"} group-hover:scale-[1.04]`}
               referrerPolicy="no-referrer"
@@ -375,5 +372,43 @@ function StackCard({
         <motion.div style={{ opacity: dim }} className="absolute inset-0 bg-black pointer-events-none z-20" />
       </motion.div>
     </div>
+  );
+}
+
+// Lightweight YouTube embed: shows the thumbnail + play button and only loads the
+// real player when clicked. Opening a style with 18 videos no longer loads 18 players.
+function LiteYouTube({ id, title }: { id: string; title: string; key?: string | number }) {
+  const [play, setPlay] = useState(false);
+  if (play) {
+    return (
+      <iframe
+        className="absolute inset-0 w-full h-full"
+        src={`https://www.youtube.com/embed/${id}?rel=0&autoplay=1&playsinline=1`}
+        title={title}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+    );
+  }
+  return (
+    <button
+      type="button"
+      onClick={() => setPlay(true)}
+      aria-label={`Play ${title}`}
+      className="cursor-grow group/yt absolute inset-0 w-full h-full"
+    >
+      <img
+        src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover/yt:opacity-100 group-hover/yt:scale-105 transition-all duration-500"
+      />
+      <span className="absolute inset-0 bg-black/20 group-hover/yt:bg-black/0 transition-colors" />
+      <span className="lite-yt__play absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center">
+        <svg viewBox="0 0 24 24" className="w-5 h-5 ml-0.5" fill="currentColor" aria-hidden><path d="M8 5v14l11-7z" /></svg>
+      </span>
+    </button>
   );
 }
