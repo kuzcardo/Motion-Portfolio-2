@@ -9,6 +9,7 @@ import ProjectGrid from "./components/ProjectGrid";
 import Marquee from "./components/Marquee";
 import Loader from "./components/Loader";
 import Magnetic from "./components/Magnetic";
+import ContactLinks from "./components/ContactLinks";
 import { motion, AnimatePresence, useScroll } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { LanguageProvider, useLanguage } from "./context/LanguageContext";
@@ -108,14 +109,8 @@ function AppContent() {
             </a>
           </Magnetic>
 
-          {/* Social row */}
-          <div className="mt-16 flex flex-wrap items-center justify-center gap-8 text-[10px] font-grotesk uppercase tracking-[0.4em] text-white/50">
-            <a href="https://www.youtube.com/" target="_blank" rel="noreferrer" className="cursor-grow hover:text-white transition-colors">YouTube</a>
-            <span className="w-1 h-1 rounded-full bg-white/30" />
-            <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" className="cursor-grow hover:text-white transition-colors">Instagram</a>
-            <span className="w-1 h-1 rounded-full bg-white/30" />
-            <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" className="cursor-grow hover:text-white transition-colors">LinkedIn</a>
-          </div>
+          {/* Instagram / LinkedIn / Mail */}
+          <ContactLinks />
         </motion.div>
       </section>
 

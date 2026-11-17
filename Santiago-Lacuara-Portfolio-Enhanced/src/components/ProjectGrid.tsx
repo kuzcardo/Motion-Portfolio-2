@@ -77,6 +77,9 @@ const projects: Project[] = [
   }
 ];
 
+// Horizontal (16:9) videos — everything else is a vertical Short (verified against YouTube)
+const horizontalIds = new Set(['gKfQuRYIzS0', '2_jLrn3C_rk', 'Ua3sqZmoKrQ', 'vxdvbLCZn5U', '8N2LEo9ysXc', 'eOTPjy-Fow8', 'PpMRNkPnA6o', 'F40p_FA9BnU', 'NTON1b1vmeI', 'zYzLro-d5jo', 'k2wqBYzhlfs', 'ZsfVYNSwr4A', 'LfhWfHBPOMU', 'A8VsAxeQFkI']);
+
 // Projects whose videos are all horizontal (16:9) unless listed otherwise
 const horizontalByDefault = new Set<number>([9]);
 
@@ -124,6 +127,10 @@ export default function ProjectGrid() {
     } else {
       document.body.style.overflow = 'unset';
     }
+    if (!selectedProject) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedProject(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [selectedProject]);
 
   // On mobile (no hover), illuminate the card closest to the viewport center
@@ -246,17 +253,20 @@ export default function ProjectGrid() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto liquid-glass rounded-3xl p-8 md:p-12 border border-white/10 shadow-2xl"
+              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto overscroll-contain liquid-glass rounded-3xl px-4 pb-6 sm:px-8 sm:pb-8 md:px-12 md:pb-12 border border-white/10 shadow-2xl"
             >
-              <button
-                onClick={() => setSelectedProject(null)}
-                className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors bg-black/20 hover:bg-black/40 p-2 rounded-full z-10"
-                aria-label="Close modal"
-              >
-                <X size={24} />
-              </button>
+              {/* Sticky so it stays reachable while scrolling long reels */}
+              <div className="sticky top-0 z-20 flex justify-end pt-4 md:pt-6 -mb-12 pointer-events-none">
+                <button
+                  onClick={() => setSelectedProject(null)}
+                  className="pointer-events-auto text-white/70 hover:text-white transition-colors bg-black/60 hover:bg-black/80 backdrop-blur p-2 rounded-full"
+                  aria-label="Close modal"
+                >
+                  <X size={24} />
+                </button>
+              </div>
 
-              <div className="mb-8 md:mb-10">
+              <div className="mb-6 md:mb-10 pt-6 md:pt-10 pr-14">
                 <span className="text-[10px] font-poppins font-bold uppercase tracking-[0.3em] text-white/50 mb-2 block text-shadow-strong">
                   {projCat(selectedProject.category)}
                 </span>
@@ -265,30 +275,39 @@ export default function ProjectGrid() {
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 grid-flow-row-dense gap-3 md:gap-6">
                 {!selectedProject.videos?.length && (
                   <div className="col-span-full py-16 text-center text-[10px] font-grotesk uppercase tracking-[0.4em] text-white/50">
                     {t('projects.soon')}
                   </div>
                 )}
-                {selectedProject.videos?.map((videoId, idx) => {
-                  const isHorizontal = horizontalByDefault.has(selectedProject.id) || ['gKfQuRYIzS0', '2_jLrn3C_rk', 'Ua3sqZmoKrQ', 'vxdvbLCZn5U', '8N2LEo9ysXc', 'eOTPjy-Fow8', 'PpMRNkPnA6o', 'F40p_FA9BnU', "NTON1b1vmeI", "zYzLro-d5jo","k2wqBYzhlfs","ZsfVYNSwr4A","LfhWfHBPOMU","A8VsAxeQFkI"].includes(videoId);
-                  return (
-                    <div 
-                      key={idx} 
-                      className={`${isHorizontal ? 'aspect-video sm:col-span-2 md:col-span-2 lg:col-span-2' : 'aspect-[9/16]'} rounded-xl overflow-hidden bg-black/50 border border-white/5 relative group`}
-                    >
-                      <iframe
-                        className="absolute inset-0 w-full h-full"
-                        src={`https://www.youtube.com/embed/${videoId}?rel=0`}
-                        title={`${selectedProject.title} video ${idx + 1}`}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
-                    </div>
-                  );
-                })}
+                {(() => {
+                  const vids = selectedProject.videos ?? [];
+                  const isH = (id: string) => horizontalByDefault.has(selectedProject.id) || horizontalIds.has(id);
+                  const horiz = vids.filter(isH);
+                  const vert = vids.filter((v) => !isH(v));
+                  // horizontals first so rows stay clean; verticals after
+                  return [...horiz, ...vert].map((videoId, idx) => {
+                    const isHorizontal = isH(videoId);
+                    const lone = isHorizontal && horiz.length % 2 === 1 && idx === horiz.length - 1;
+                    return (
+                      <div
+                        key={videoId + idx}
+                        className={`${isHorizontal ? `aspect-video col-span-2 md:col-span-3 ${lone ? 'lg:col-span-4' : 'lg:col-span-2'}` : 'aspect-[9/16]'} rounded-xl overflow-hidden bg-black/50 border border-white/5 relative group`}
+                      >
+                        <iframe
+                          className="absolute inset-0 w-full h-full"
+                          src={`https://www.youtube.com/embed/${videoId}?rel=0`}
+                          title={`${selectedProject.title} video ${idx + 1}`}
+                          loading="lazy"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    );
+                  });
+                })()}
               </div>
             </motion.div>
           </motion.div>

@@ -1,15 +1,17 @@
-import { motion, animate, useInView, useMotionValue, useMotionTemplate, useTransform, type MotionValue } from "motion/react";
+import { motion, animate, useInView, useMotionValue, useMotionTemplate, useSpring, useTransform, type MotionValue } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { MousePointer2 } from "lucide-react";
 
 const SRC = "https://i.ibb.co/1YXbWWRj/retratardo.png";
-const START = 0.2; // the box starts at 20% of its final size, pinned to the top-left corner
+const START = 0.2; // the frame starts at 20% of its final size, pinned to the top-left corner
+const PAD = 16;    // distance from the photo to the dashed frame / gold corners
 
 /**
- * About photo intro, Figma/After-Effects style:
- * a small selection box sits in the top-left corner, a cursor appears, grabs the
- * bottom-right handle and drags it out — the whole container grows with it —
- * and once it reaches full size the photo appears.
+ * About photo intro, Figma/After-Effects style.
+ * There is ONE container: the photo + its dashed frame + its two gold corners.
+ * It starts small in the top-left; a cursor grabs the bottom-right gold corner
+ * (the corner opposite the anchor) and drags it out — the whole container grows
+ * with it — and when it reaches full size the photo appears.
  * Plays once when the photo scrolls into view. Hover afterwards: frame opens up + colour.
  */
 export default function AboutPhoto() {
@@ -23,49 +25,78 @@ export default function AboutPhoto() {
   const cursorScale = useMotionValue(1);
   const photoOpacity = useMotionValue(0);
   const photoScale = useMotionValue(1.15);
-  const uiOpacity = useMotionValue(1); // selection outline + handles
+  const labelOpacity = useMotionValue(0);
+  // extra breathing room for the frame on hover (after the intro)
+  const grow = useSpring(0, { stiffness: 180, damping: 16 });
 
-  const pct = useTransform(size, (v) => `${v * 100}%`);
+  const pct = useTransform(size, (v) => v * 100);
   const inset = useTransform(size, (v) => `${(1 - v) * 100}%`);
   const clip = useMotionTemplate`inset(0 ${inset} ${inset} 0 round 14px)`;
+
+  // Dashed frame: anchored top-left, its size follows the drag
+  const frameOff = useTransform(grow, (g) => -PAD - g);
+  const frameSize = useMotionTemplate`calc(${pct}% + ${useTransform(grow, (g) => 2 * (PAD + g))}px)`;
+  // Bottom-right gold corner: rides on the dragged corner
+  const brPos = useMotionTemplate`calc(${pct}% + ${useTransform(grow, (g) => PAD + g - 32)}px)`;
+  // Cursor: its tip sits right on the tip of that corner
+  const cursorPos = useMotionTemplate`calc(${pct}% + ${useTransform(grow, (g) => PAD + g - 4)}px)`;
 
   useEffect(() => {
     if (!inView) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      size.set(1); photoOpacity.set(1); photoScale.set(1); uiOpacity.set(0); setDone(true);
+      size.set(1); photoOpacity.set(1); photoScale.set(1); setDone(true);
       return;
     }
     let cancelled = false;
     (async () => {
       await new Promise((r) => setTimeout(r, 250));
+      animate(labelOpacity, 1, { duration: 0.3 });
       await animate(cursorOpacity, 1, { duration: 0.35 });
-      await animate(cursorScale, 0.8, { duration: 0.15 }); // press
+      await animate(cursorScale, 0.8, { duration: 0.15 }); // grab
       await animate(size, 1, { duration: 1.25, ease: [0.65, 0, 0.35, 1] }); // drag
       if (cancelled) return;
       animate(cursorScale, 1, { duration: 0.15 }); // release
       animate(photoOpacity, 1, { duration: 0.6 });
       animate(photoScale, 1, { duration: 1.1, ease: [0.22, 1, 0.36, 1] });
+      animate(labelOpacity, 0, { duration: 0.4, delay: 0.3 });
       await animate(cursorOpacity, 0, { duration: 0.4, delay: 0.25 });
-      await animate(uiOpacity, 0, { duration: 0.4 });
       setDone(true);
     })();
     return () => { cancelled = true; };
   }, [inView]);
 
   const expanded = done && hover;
+  useEffect(() => { grow.set(expanded ? 10 : 0); }, [expanded]);
 
   return (
     <div className="w-full max-w-[300px] md:max-w-md aspect-[4/5] relative mx-auto md:mx-0">
-      <motion.div
+      <div
         ref={ref}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        animate={{ scale: expanded ? 1.04 : 1 }}
-        transition={{ type: "spring", stiffness: 180, damping: 18 }}
-        className="cursor-grow relative w-full h-full z-10"
+        className="cursor-grow relative w-full h-full"
       >
-        {/* The container itself — clipped to the size being dragged */}
-        <motion.div style={{ clipPath: clip }} className="absolute inset-0 overflow-hidden bg-zinc-900">
+        {/* Dashed frame — part of the same container */}
+        <motion.div
+          aria-hidden
+          style={{ top: frameOff, left: frameOff, width: frameSize, height: frameSize }}
+          className={`absolute border border-dashed pointer-events-none transition-colors duration-500 ${expanded ? "photo-frame--hot" : "photo-frame"}`}
+        />
+        {/* Top-left gold corner — the anchor, never moves during the drag */}
+        <motion.div
+          aria-hidden
+          style={{ top: frameOff, left: frameOff, borderColor: "#E9B872" }}
+          className="absolute w-8 h-8 border-t-2 border-l-2 pointer-events-none"
+        />
+        {/* Bottom-right gold corner — the one the cursor grabs */}
+        <motion.div
+          aria-hidden
+          style={{ top: brPos, left: brPos, borderColor: "#E9B872" }}
+          className="absolute w-8 h-8 border-b-2 border-r-2 pointer-events-none z-20"
+        />
+
+        {/* The photo, clipped to the current size */}
+        <motion.div style={{ clipPath: clip }} className="absolute inset-0 overflow-hidden bg-zinc-900 z-10">
           <motion.img
             src={SRC}
             alt="Santiago Lacuara"
@@ -77,59 +108,24 @@ export default function AboutPhoto() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent pointer-events-none" />
         </motion.div>
 
-        {/* Selection outline + handles, following the box */}
-        <motion.div
+        {/* Live size readout next to the dragged corner */}
+        <motion.span
           aria-hidden
-          style={{ width: pct, height: pct, opacity: uiOpacity, border: "1.5px solid #E9B872" }}
-          className="absolute top-0 left-0 pointer-events-none rounded-[14px]"
+          style={{ top: cursorPos, left: cursorPos, opacity: labelOpacity, background: "#E9B872", color: "#050505", x: 22, y: 26 }}
+          className="absolute z-30 text-[9px] font-grotesk tracking-[0.2em] px-2 py-0.5 rounded whitespace-nowrap pointer-events-none"
         >
-          {[
-            "-top-[5px] -left-[5px]", "-top-[5px] -right-[5px]",
-            "-bottom-[5px] -left-[5px]", "-bottom-[5px] -right-[5px]",
-          ].map((pos) => (
-            <span key={pos} className={`absolute ${pos} w-[9px] h-[9px] bg-white border`} style={{ borderColor: "#E9B872" }} />
-          ))}
-          {/* live size readout, like a design tool */}
-          <motion.span
-            className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[9px] font-grotesk tracking-[0.2em] px-2 py-0.5 rounded whitespace-nowrap"
-            style={{ background: "#E9B872", color: "#050505" }}
-          >
-            <SizeLabel size={size} />
-          </motion.span>
-        </motion.div>
+          <SizeLabel size={size} />
+        </motion.span>
 
-        {/* The cursor — sits on the bottom-right handle and drags it */}
+        {/* The cursor */}
         <motion.div
           aria-hidden
-          style={{ left: pct, top: pct, opacity: cursorOpacity, scale: cursorScale }}
-          className="absolute z-30 pointer-events-none -translate-x-[2px] -translate-y-[2px]"
+          style={{ top: cursorPos, left: cursorPos, opacity: cursorOpacity, scale: cursorScale }}
+          className="absolute z-30 pointer-events-none origin-top-left"
         >
           <MousePointer2 size={26} fill="#ffffff" color="#050505" strokeWidth={1.5} className="drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)]" />
         </motion.div>
-      </motion.div>
-
-      {/* Frame + corners: open up on hover once the intro is done */}
-      <motion.div
-        aria-hidden
-        style={{ opacity: useTransform(photoOpacity, [0, 1], [0, 1]) }}
-        animate={{ inset: expanded ? -26 : -16, borderColor: expanded ? "rgba(233,184,114,0.6)" : "rgba(233,184,114,0.25)" }}
-        transition={{ type: "spring", stiffness: 160, damping: 18 }}
-        className="absolute border border-dashed z-0 pointer-events-none"
-      />
-      <motion.div
-        aria-hidden
-        animate={{ x: expanded ? -12 : 0, y: expanded ? -12 : 0 }}
-        transition={{ type: "spring", stiffness: 200, damping: 16 }}
-        className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 z-0 pointer-events-none"
-        style={{ borderColor: "#E9B872" }}
-      />
-      <motion.div
-        aria-hidden
-        animate={{ x: expanded ? 12 : 0, y: expanded ? 12 : 0 }}
-        transition={{ type: "spring", stiffness: 200, damping: 16 }}
-        className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 z-0 pointer-events-none"
-        style={{ borderColor: "#E9B872" }}
-      />
+      </div>
     </div>
   );
 }

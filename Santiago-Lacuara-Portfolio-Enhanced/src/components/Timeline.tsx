@@ -1,5 +1,5 @@
-import { motion, useScroll, useSpring, useTransform } from "motion/react";
-import { useRef } from "react";
+import { motion, useScroll, useSpring, useTransform, useMotionValueEvent } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import { Plane } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -59,6 +59,35 @@ export default function Timeline() {
   // a little wobble while flying
   const planeTilt = useTransform(progress, (v) => 135 + Math.sin(v * Math.PI * 6) * 8);
 
+  // Where each dot sits along the track (0..1), measured from the DOM
+  const stops = useRef<number[]>([]);
+  useEffect(() => {
+    const measure = () => {
+      const list = listRef.current;
+      if (!list) return;
+      const lr = list.getBoundingClientRect();
+      const dots = list.querySelectorAll<HTMLElement>("[data-dot]");
+      const next: number[] = [];
+      dots.forEach((d) => {
+        const r = d.getBoundingClientRect();
+        next.push((r.top + r.height / 2 - lr.top) / lr.height);
+      });
+      stops.current = next;
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (listRef.current) ro.observe(listRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  // How many dots the plane has passed; the last one passed is the "active" stop
+  const [reached, setReached] = useState(0);
+  useMotionValueEvent(progress, "change", (v) => {
+    const n = stops.current.filter((s) => v >= s - 0.005).length;
+    setReached((prev) => (prev === n ? prev : n));
+  });
+  const active = reached - 1;
+
   return (
     <div className="relative z-10 max-w-screen-xl mx-auto mt-24 md:mt-40">
       <motion.div
@@ -116,18 +145,25 @@ export default function Timeline() {
                 transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                 className="relative pl-10 md:pl-0 md:grid md:grid-cols-2 md:gap-16"
               >
-                {/* Dot */}
+                {/* Dot — pulses when the plane lands on it */}
                 <span
-                  className={`timeline-dot ${e.current ? "is-current" : ""} absolute left-0 md:left-1/2 md:-translate-x-1/2 top-7 w-[15px] h-[15px] rounded-full z-10`}
+                  data-dot
+                  className={`timeline-dot ${e.current ? "is-current" : ""} ${i < reached ? "is-reached" : ""} absolute left-0 md:left-1/2 md:-translate-x-1/2 top-7 w-[15px] h-[15px] rounded-full z-10`}
                   aria-hidden
-                />
+                >
+                  {i < reached && <span key={`hit-${i}`} className="tl-hit" />}
+                </span>
                 {/* Dashed connector from the dot to the card (desktop) */}
                 <span
-                  className={`tl-connector hidden md:block absolute top-[34px] w-16 ${right ? "left-1/2" : "right-1/2"}`}
+                  className={`tl-connector ${i === active ? "is-active" : ""} hidden md:block absolute top-[34px] w-16 ${right ? "left-1/2" : "right-1/2"}`}
                   aria-hidden
                 />
 
-                <div className={`tl-card relative p-5 md:p-6 rounded-2xl ${right ? "md:col-start-2" : "md:col-start-1 md:text-right"}`}>
+                <div className={`tl-card ${i === active ? "is-active" : ""} relative p-5 md:p-6 rounded-2xl ${right ? "md:col-start-2" : "md:col-start-1 md:text-right"}`}>
+                  {/* dashed stroke — marches and turns amber while the plane is here */}
+                  <svg className="tl-card__stroke" aria-hidden>
+                    <rect x="0.75" y="0.75" rx="16" ry="16" />
+                  </svg>
                   <span className="absolute top-3 text-[9px] font-grotesk tracking-[0.3em] text-white/40 hidden md:block"
                     style={right ? { right: 16 } : { left: 16 }}>
                     {String(i + 1).padStart(2, "0")}
