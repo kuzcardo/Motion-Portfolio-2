@@ -135,10 +135,6 @@ export default function HeroAboutSection() {
         {/* Career timeline */}
         <Timeline />
 
-        {/* Background decorative text */}
-        <div className="absolute top-1/2 left-0 -translate-y-1/2 text-[26vw] md:text-[20vw] font-sans font-black pointer-events-none select-none uppercase z-0 opacity-[0.02] whitespace-nowrap">
-          {t('about.bg_text')}
-        </div>
       </section>
     </>
   );
