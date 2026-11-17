@@ -56,7 +56,7 @@ export default function AboutPhoto() {
       await animate(size, 1, { duration: 1.25, ease: [0.65, 0, 0.35, 1] }); // drag
       if (cancelled) return;
       animate(cursorScale, 1, { duration: 0.15 }); // release
-      animate(photoOpacity, 1, { duration: 0.6 });
+      animate(photoOpacity, 1, { duration: 0.2 });
       animate(photoScale, 1, { duration: 1.1, ease: [0.22, 1, 0.36, 1] });
       animate(labelOpacity, 0, { duration: 0.4, delay: 0.3 });
       await animate(cursorOpacity, 0, { duration: 0.4, delay: 0.25 });
@@ -95,12 +95,12 @@ export default function AboutPhoto() {
           className="absolute w-8 h-8 border-b-2 border-r-2 pointer-events-none z-20"
         />
 
-        {/* The photo, clipped to the current size */}
-        <motion.div style={{ clipPath: clip }} className="absolute inset-0 overflow-hidden bg-zinc-900 z-10">
+        {/* The photo — invisible (no grey box) while dragging, appears once the frame is full size */}
+        <motion.div style={{ clipPath: clip, opacity: photoOpacity }} className="absolute inset-0 overflow-hidden z-10">
           <motion.img
             src={SRC}
             alt="Santiago Lacuara"
-            style={{ opacity: photoOpacity, scale: photoScale }}
+            style={{ scale: photoScale }}
             className={`w-full h-full object-cover transition-[filter] duration-700 ${expanded ? "grayscale-0" : "grayscale"}`}
             referrerPolicy="no-referrer"
           />
