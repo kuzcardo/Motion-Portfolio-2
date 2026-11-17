@@ -1,4 +1,4 @@
-import { motion, useScroll, useSpring, useTransform, useMotionValueEvent } from "motion/react";
+import { motion, animate, useScroll, useSpring, useTransform, useMotionValue, useMotionValueEvent } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Plane } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
@@ -88,6 +88,65 @@ export default function Timeline() {
   });
   const active = reached - 1;
 
+  // Arrival show: when the plane lands on the present job it leaves the line,
+  // does a lap around that card, and comes back to the track.
+  const planeRef = useRef<HTMLDivElement>(null);
+  const loopX = useMotionValue(0);
+  const loopY = useMotionValue(0);
+  const loopRot = useMotionValue(0); // added on top of the normal tilt
+  const looping = useRef(false);
+  const prevReached = useRef(0);
+  const planeRotate = useTransform(() => planeTilt.get() + loopRot.get());
+
+  useEffect(() => {
+    const arrived = reached === entries.length && prevReached.current < entries.length;
+    prevReached.current = reached;
+    if (!arrived || looping.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const plane = planeRef.current;
+    const card = listRef.current?.querySelector<HTMLElement>(`[data-card="${entries.length - 1}"]`);
+    if (!plane || !card) return;
+
+    const p = plane.getBoundingClientRect();
+    const c = card.getBoundingClientRect();
+    // card centre relative to the plane
+    const cx = c.left + c.width / 2 - (p.left + p.width / 2);
+    const cy = c.top + c.height / 2 - (p.top + p.height / 2);
+    // stay inside the screen on phones
+    const rx = Math.max(c.width / 2 + 8, Math.min(c.width / 2 + 34, window.innerWidth - 22 - (c.left + c.width / 2)));
+    const ry = c.height / 2 + 30;
+    // start the orbit at the point of the ellipse closest to the plane
+    const a0 = Math.atan2(-cy / ry, -cx / rx);
+
+    const N = 48;
+    const xs: number[] = [0], ys: number[] = [0], rots: number[] = [0];
+    const base = 135; // normal heading (pointing down the track)
+    let lastHeading = 90;
+    const unwrap = (h: number) => {
+      while (h - lastHeading > 180) h -= 360;
+      while (h - lastHeading < -180) h += 360;
+      lastHeading = h;
+      return h;
+    };
+    for (let k = 0; k <= N; k++) {
+      const a = a0 + (k / N) * Math.PI * 2; // clockwise on screen
+      xs.push(cx + rx * Math.cos(a));
+      ys.push(cy + ry * Math.sin(a));
+      const heading = (Math.atan2(ry * Math.cos(a), -rx * Math.sin(a)) * 180) / Math.PI;
+      rots.push(unwrap(heading) + 45 - base);
+    }
+    xs.push(0); ys.push(0); rots.push(Math.round(rots[rots.length - 1] / 360) * 360);
+
+    looping.current = true;
+    const opts = { duration: 2.6, ease: "easeInOut" as const };
+    animate(loopX, xs, opts);
+    animate(loopY, ys, opts);
+    animate(loopRot, rots, opts).then(() => {
+      loopRot.set(0);
+      looping.current = false;
+    });
+  }, [reached]);
+
   return (
     <div className="relative z-10 max-w-screen-xl mx-auto mt-24 md:mt-40">
       <motion.div
@@ -126,11 +185,11 @@ export default function Timeline() {
           className="absolute left-[8px] md:left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
           aria-hidden
         >
-          <div className="tl-plane">
-            <motion.div style={{ rotate: planeTilt }}>
+          <motion.div ref={planeRef} style={{ x: loopX, y: loopY }} className="tl-plane">
+            <motion.div style={{ rotate: planeRotate }}>
               <Plane size={18} strokeWidth={1.8} />
             </motion.div>
-          </div>
+          </motion.div>
         </motion.div>
 
         <ol className="space-y-10 md:space-y-14 py-6">
@@ -159,7 +218,7 @@ export default function Timeline() {
                   aria-hidden
                 />
 
-                <div className={`tl-card ${i === active ? "is-active" : ""} relative p-5 md:p-6 rounded-2xl ${right ? "md:col-start-2" : "md:col-start-1 md:text-right"}`}>
+                <div data-card={i} className={`tl-card ${i === active ? "is-active" : ""} relative p-5 md:p-6 rounded-2xl ${right ? "md:col-start-2" : "md:col-start-1 md:text-right"}`}>
                   {/* dashed stroke — marches and turns amber while the plane is here */}
                   <svg className="tl-card__stroke" aria-hidden>
                     <rect x="0.75" y="0.75" rx="16" ry="16" />

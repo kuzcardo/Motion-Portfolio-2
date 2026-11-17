@@ -37,30 +37,31 @@ export default function ContactSection() {
         </div>
 
         {/* The ticket */}
-        <div className="contact-ticket relative rounded-[28px] grid grid-cols-1 md:grid-cols-[1.25fr_auto_1fr]">
+        <div className="contact-ticket relative rounded-[28px] grid grid-cols-1 md:grid-cols-[1fr_auto_1fr]">
           <svg className="contact-ticket__stroke" aria-hidden>
             <rect x="0.75" y="0.75" rx="28" ry="28" />
           </svg>
 
           {/* Left: headline */}
-          <div className="relative p-7 sm:p-10 md:p-14 flex flex-col justify-between gap-10">
-            <div className="flex items-center justify-between gap-4 text-[9px] font-grotesk uppercase tracking-[0.4em] text-white/50">
+          <div className="relative p-7 sm:p-10 md:p-12 flex flex-col justify-center items-center text-center gap-8 md:gap-10">
+            <div className="flex items-center justify-center gap-4 text-[9px] font-grotesk uppercase tracking-[0.4em] text-white/50">
               <span style={{ color: "#E9B872" }}>{t("contact.inquiries")}</span>
-              <span>BUE <span className="contact-mini-dash" aria-hidden /> ✦</span>
+              <span aria-hidden className="contact-mini-dash" />
+              <span>BUE ✦</span>
             </div>
 
-            <h2 className="text-[17vw] sm:text-[13vw] md:text-[7.2vw] xl:text-[104px] font-display font-bold uppercase leading-[0.88] tracking-tighter">
+            <h2 className="text-[17vw] sm:text-[13vw] md:text-[6vw] xl:text-[88px] font-display font-bold uppercase leading-[0.88] tracking-tighter">
               <span className="gold-text">{t("contact.title")}</span>
             </h2>
 
-            <div className="grid grid-cols-2 gap-6 text-[9px] font-grotesk uppercase tracking-[0.35em] text-white/40">
+            <div className="grid grid-cols-2 gap-8 text-[9px] font-grotesk uppercase tracking-[0.35em] text-white/40">
               <div>
                 <span className="block mb-1">{t("contact.from")}</span>
                 <span className="text-white/90 text-[11px] tracking-[0.25em]">Buenos Aires</span>
               </div>
               <div>
                 <span className="block mb-1">{t("contact.status")}</span>
-                <span className="inline-flex items-center gap-2 text-white/90 text-[11px] tracking-[0.25em]">
+                <span className="inline-flex items-center justify-center gap-2 text-white/90 text-[11px] tracking-[0.25em]">
                   <span className="contact-live" aria-hidden /> {t("contact.available")}
                 </span>
               </div>
