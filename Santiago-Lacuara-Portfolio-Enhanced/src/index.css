@@ -527,3 +527,103 @@ body.light-mode .contact-btn:hover .contact-btn__icon { color: #050505; }
 @media (prefers-reduced-motion: reduce) {
   .contact-btn__ring, .contact-btn__ring circle { animation: none !important; }
 }
+
+/* ============================================================
+   CONTACT — dashed boarding pass
+   ============================================================ */
+.contact-ticket {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(6px);
+}
+.contact-ticket__stroke, .contact-gate__stroke {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  overflow: visible; pointer-events: none;
+}
+.contact-ticket__stroke rect {
+  width: calc(100% - 1.5px); height: calc(100% - 1.5px);
+  fill: none; stroke: rgba(233, 184, 114, 0.45); stroke-width: 1.4;
+  stroke-dasharray: 8 7;
+  animation: contactMarchLong 2.4s linear infinite;
+}
+@keyframes contactMarchLong { to { stroke-dashoffset: -30; } }
+
+/* perforation between the two halves */
+.contact-perf { width: 0; }
+.contact-perf::before {
+  content: ""; position: absolute; top: 28px; bottom: 28px; left: 0;
+  border-left: 1.5px dashed rgba(255, 255, 255, 0.2);
+}
+.contact-perf__notch {
+  position: absolute; left: 0; width: 28px; height: 28px; border-radius: 9999px;
+  background: #050505; transform: translateX(-50%);
+  border: 1.4px dashed rgba(233, 184, 114, 0.45);
+}
+.contact-perf__notch--a { top: -14px; clip-path: inset(50% 0 0 0); }
+.contact-perf__notch--b { bottom: -14px; clip-path: inset(0 0 50% 0); }
+@media (max-width: 767px) {
+  .contact-perf { width: auto; height: 0; margin: 0 20px; }
+  .contact-perf::before { top: 0; bottom: auto; left: 8px; right: 8px; border-left: 0; border-top: 1.5px dashed rgba(255, 255, 255, 0.2); }
+  .contact-perf__notch { top: 0; transform: translateY(-50%); }
+  .contact-perf__notch--a { left: -34px; right: auto; clip-path: inset(0 0 0 50%); }
+  .contact-perf__notch--b { left: auto; right: -34px; bottom: auto; clip-path: inset(0 50% 0 0); transform: translateY(-50%); }
+}
+
+.contact-mini-dash { display: inline-block; width: 28px; vertical-align: middle; border-top: 1.5px dashed #E9B872; margin: 0 6px; }
+.contact-live { width: 7px; height: 7px; border-radius: 9999px; background: #6EE7A0; animation: dotPulseGreen 2s ease-out infinite; }
+@keyframes dotPulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(110, 231, 160, 0.6); }
+  100% { box-shadow: 0 0 0 9px rgba(110, 231, 160, 0); }
+}
+
+/* gates */
+.contact-gate { background: rgba(255, 255, 255, 0.015); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+.contact-gate__stroke rect {
+  width: calc(100% - 1.5px); height: calc(100% - 1.5px);
+  fill: none; stroke: rgba(255, 255, 255, 0.18); stroke-width: 1.2;
+  stroke-dasharray: 6 6;
+  transition: stroke 0.4s ease;
+}
+.contact-gate:hover .contact-gate__stroke rect { stroke: #E9B872; animation: tlStrokeMarch 0.9s linear infinite; }
+.contact-gate__sweep {
+  position: absolute; inset: 0; border-radius: inherit;
+  background: #E9B872;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.contact-gate:hover .contact-gate__sweep { transform: scaleX(1); }
+.contact-gate:hover, .contact-gate:hover .text-white\/40, .contact-gate:hover .text-white\/60 { color: #050505 !important; }
+.contact-gate:hover .contact-btn__ring circle { stroke: #050505; }
+.contact-gate__icon, .contact-gate__arrow { color: currentColor; transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.contact-gate:hover .contact-gate__icon { transform: scale(1.1) rotate(-8deg); }
+.contact-gate:hover .contact-gate__arrow { transform: translate(3px, -3px); }
+
+/* the dashed route + looping plane */
+.contact-route path { fill: none; stroke: rgba(233, 184, 114, 0.35); stroke-width: 1.4; stroke-dasharray: 6 7; vector-effect: non-scaling-stroke; animation: contactMarchLong 2s linear infinite; }
+.contact-plane {
+  position: absolute; left: 0; top: 0;
+  width: 30px; height: 30px; border-radius: 9999px;
+  display: flex; align-items: center; justify-content: center;
+  background: #E9B872; color: #050505;
+  box-shadow: 0 0 0 5px rgba(233, 184, 114, 0.15), 0 0 20px rgba(233, 184, 114, 0.5);
+  animation: contactFly 9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+.contact-plane svg { transform: rotate(45deg); }
+/* follows the same arc as the SVG route (approximated with keyframes so it scales with width) */
+@keyframes contactFly {
+  0%   { left: 0%;   top: 90%; transform: translate(-50%, -50%) rotate(-40deg); opacity: 0; }
+  6%   { opacity: 1; }
+  25%  { left: 25%;  top: 30%; transform: translate(-50%, -50%) rotate(-18deg); }
+  50%  { left: 50%;  top: 12%; transform: translate(-50%, -50%) rotate(0deg); }
+  75%  { left: 75%;  top: 30%; transform: translate(-50%, -50%) rotate(18deg); }
+  94%  { opacity: 1; }
+  100% { left: 100%; top: 90%; transform: translate(-50%, -50%) rotate(40deg); opacity: 0; }
+}
+
+body.light-mode .contact-ticket { background: rgba(0, 0, 0, 0.02); }
+body.light-mode .contact-perf__notch { background: #F4F1EB; }
+body.light-mode .contact-perf::before { border-color: rgba(0, 0, 0, 0.2); }
+body.light-mode .contact-gate__stroke rect { stroke: rgba(0, 0, 0, 0.2); }
+body.light-mode .contact-gate__icon, body.light-mode .contact-gate__arrow { color: #111; }
+@media (prefers-reduced-motion: reduce) {
+  .contact-plane, .contact-route path, .contact-ticket__stroke rect, .contact-live { animation: none !important; }
+}

@@ -9,7 +9,7 @@ import ProjectGrid from "./components/ProjectGrid";
 import Marquee from "./components/Marquee";
 import Loader from "./components/Loader";
 import Magnetic from "./components/Magnetic";
-import ContactLinks from "./components/ContactLinks";
+import ContactSection from "./components/ContactSection";
 import { motion, AnimatePresence, useScroll } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { LanguageProvider, useLanguage } from "./context/LanguageContext";
@@ -76,43 +76,8 @@ function AppContent() {
       <Marquee />
       <ProjectGrid />
 
-      {/* Contact Section — bold redesign */}
-      <section
-        id="contact"
-        className="relative py-32 md:py-56 px-4 md:px-12 overflow-hidden border-t border-white/10"
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 max-w-screen-2xl mx-auto text-center"
-        >
-          <span
-            className="text-[10px] font-grotesk font-medium uppercase tracking-[0.6em] block mb-8"
-            style={{ color: "#E9B872" }}
-          >
-            {t("contact.inquiries")}
-          </span>
-
-          <h2 className="text-[14vw] md:text-[10vw] font-display font-bold uppercase leading-[0.9] mb-12 md:mb-16 tracking-tighter">
-            <span className="gold-text">{t("contact.title")}</span>
-          </h2>
-
-          <Magnetic strength={0.4} className="inline-block">
-            <a
-              href="mailto:santiago.lopezlacuara@gmail.com"
-              className="cursor-grow group inline-flex items-center gap-3 text-base md:text-2xl font-grotesk font-light border-b border-white/20 pb-2 hover:border-white transition-colors break-all"
-            >
-              <span>santiago.lopezlacuara@gmail.com</span>
-              <span className="hidden md:inline transition-transform group-hover:translate-x-1">→</span>
-            </a>
-          </Magnetic>
-
-          {/* Instagram / LinkedIn / Mail */}
-          <ContactLinks />
-        </motion.div>
-      </section>
+      {/* Contact — dashed boarding pass */}
+      <ContactSection />
 
       <footer className="py-10 md:py-16 px-4 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0 text-[10px] font-grotesk uppercase tracking-[0.4em] text-white/30 text-center border-t border-white/5">
         <span>© 2026 Santiago Lacuara</span>
