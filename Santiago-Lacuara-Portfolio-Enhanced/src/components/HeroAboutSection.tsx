@@ -145,7 +145,7 @@ export default function HeroAboutSection() {
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             className="text-left pl-5 md:pl-8 border-l border-white/20"
           >
-            <span className="text-[10px] font-grotesk font-medium uppercase tracking-[0.6em] mb-6 block" style={{ color: "#E9B872" }}>{t('about.label')}</span>
+            <span className="text-[10px] font-grotesk font-medium uppercase tracking-[0.6em] mb-6 block" style={{ color: "var(--accent-ink)" }}>{t('about.label')}</span>
             <div className="space-y-6 text-base md:text-lg text-white/80 leading-relaxed font-light">
               <p>{t('about.p1')}</p>
               <p>{t('about.p2')}</p>

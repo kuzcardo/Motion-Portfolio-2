@@ -78,7 +78,7 @@ function AppContent() {
 
       <footer className="py-10 md:py-16 px-4 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0 text-[10px] font-grotesk uppercase tracking-[0.4em] text-white/30 text-center border-t border-white/5">
         <span>© 2026 Santiago Lacuara</span>
-        <span className="hidden md:block" style={{ color: "#E9B872" }}>Motion Graphics</span>
+        <span className="hidden md:block" style={{ color: "var(--accent-ink)" }}>Motion Graphics</span>
         <span>{t("footer.rights")}</span>
       </footer>
     </div>

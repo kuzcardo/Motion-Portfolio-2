@@ -45,7 +45,7 @@ export default function ContactSection() {
           {/* Left: headline */}
           <div className="relative p-7 sm:p-10 md:p-12 flex flex-col justify-center items-center text-center gap-8 md:gap-10">
             <div className="flex items-center justify-center gap-4 text-[9px] font-grotesk uppercase tracking-[0.4em] text-white/50">
-              <span style={{ color: "#E9B872" }}>{t("contact.inquiries")}</span>
+              <span style={{ color: "var(--accent-ink)" }}>{t("contact.inquiries")}</span>
               <span aria-hidden className="contact-mini-dash" />
               <span>BUE ✦</span>
             </div>

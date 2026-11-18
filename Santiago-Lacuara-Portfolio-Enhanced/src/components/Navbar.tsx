@@ -1,10 +1,30 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useLanguage } from "../context/LanguageContext";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Navbar() {
   const { language, setLanguage, t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
+  const themeLabel = theme === "dark"
+    ? (language === "es" ? "Cambiar a modo claro" : "Switch to light mode")
+    : (language === "es" ? "Cambiar a modo oscuro" : "Switch to dark mode");
+  // sun in dark mode (go light), moon in light mode (go dark); icon spins in on change
+  const ThemeIcon = () => (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.span
+        key={theme}
+        initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
+        animate={{ rotate: 0, opacity: 1, scale: 1 }}
+        exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
+        transition={{ duration: 0.25 }}
+        className="flex"
+      >
+        {theme === "dark" ? <Sun size={15} strokeWidth={2} /> : <Moon size={15} strokeWidth={2} />}
+      </motion.span>
+    </AnimatePresence>
+  );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [scrollHidden, setScrollHidden] = useState(false);
@@ -176,7 +196,7 @@ export default function Navbar() {
                   animate="visible"
                   href={`#${sec}`}
                   className="cursor-grow transition-colors"
-                  style={{ color: isActive ? '#E9B872' : undefined, opacity: isActive ? 1 : 0.7 }}
+                  style={{ color: isActive ? 'var(--accent-ink)' : undefined, opacity: isActive ? 1 : 0.7 }}
                 >
                   {t(`nav.${key}`)}
                 </motion.a>
@@ -208,6 +228,16 @@ export default function Navbar() {
                 </button>
                 <span className={`text-[9px] tracking-[0.2em] transition-opacity duration-300 ${language === 'es' ? 'opacity-100' : 'opacity-30'}`}>ES</span>
               </div>
+
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                aria-label={themeLabel}
+                title={themeLabel}
+                className="w-8 h-8 rounded-full border border-dashed border-white/25 flex items-center justify-center text-white/80 hover:text-white hover:border-white/60 transition-colors"
+              >
+                <ThemeIcon />
+              </button>
             </motion.div>
           </div>
         </div>
@@ -237,7 +267,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            style={{ background: "rgba(8, 8, 8, 0.92)" }}
+            style={{ background: "color-mix(in srgb, var(--color-black) 98%, transparent)" }}
             className="fixed top-4 left-4 right-4 z-[110] liquid-glass rounded-3xl p-8 flex flex-col items-center gap-8 border border-white/10 shadow-2xl"
           >
             <button 
@@ -279,6 +309,13 @@ export default function Navbar() {
                 </button>
                 <span className={`text-[10px] tracking-[0.2em] transition-opacity duration-300 ${language === 'es' ? 'opacity-100' : 'opacity-30'}`}>ES</span>
               </div>
+              <button
+                onClick={toggleTheme}
+                aria-label={themeLabel}
+                className="w-11 h-11 rounded-full border border-dashed border-white/25 flex items-center justify-center text-white/80"
+              >
+                <ThemeIcon />
+              </button>
             </div>
           </motion.div>
         )}

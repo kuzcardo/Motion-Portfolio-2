@@ -24,7 +24,7 @@ export default function Marquee() {
               <span className="text-3xl md:text-5xl font-display font-light uppercase tracking-tight stroke-text">
                 {item}
               </span>
-              <span className="text-accent text-xl md:text-2xl" style={{ color: "#E9B872" }}>
+              <span className="text-accent text-xl md:text-2xl" style={{ color: "var(--accent-ink)" }}>
                 ✦
               </span>
             </span>
@@ -36,7 +36,7 @@ export default function Marquee() {
               <span className="text-3xl md:text-5xl font-display font-light uppercase tracking-tight stroke-text">
                 {item}
               </span>
-              <span className="text-xl md:text-2xl" style={{ color: "#E9B872" }}>
+              <span className="text-xl md:text-2xl" style={{ color: "var(--accent-ink)" }}>
                 ✦
               </span>
             </span>

@@ -235,13 +235,13 @@ export default function ProjectGrid() {
           className="mb-16 md:mb-24 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4"
         >
           <div>
-            <span className="text-[10px] font-grotesk font-medium uppercase tracking-[0.5em] block mb-4" style={{ color: "#E9B872" }}>
+            <span className="text-[10px] font-grotesk font-medium uppercase tracking-[0.5em] block mb-4" style={{ color: "var(--accent-ink)" }}>
               {t('projects.label')}
             </span>
             <h2 className="text-5xl md:text-8xl font-display font-bold uppercase tracking-tighter leading-[0.9]">{t('projects.title')}</h2>
           </div>
           <span className="text-[10px] font-grotesk font-light uppercase tracking-[0.4em] text-white/60">
-            <span style={{ color: "#E9B872" }}>{String(current + 1).padStart(2, "0")}</span> — {String(projects.length).padStart(2, "0")}
+            <span style={{ color: "var(--accent-ink)" }}>{String(current + 1).padStart(2, "0")}</span> — {String(projects.length).padStart(2, "0")}
           </span>
         </motion.div>
 
@@ -296,7 +296,7 @@ export default function ProjectGrid() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto overscroll-contain liquid-glass rounded-3xl px-4 pb-6 sm:px-8 sm:pb-8 md:px-12 md:pb-12 border border-white/10 shadow-2xl"
+              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto overscroll-contain liquid-glass reel-modal rounded-3xl px-4 pb-6 sm:px-8 sm:pb-8 md:px-12 md:pb-12 border border-white/10 shadow-2xl"
             >
               {/* Sticky so it stays reachable while scrolling long reels */}
               <div className="sticky top-0 z-20 flex justify-end pt-4 md:pt-6 -mb-12 pointer-events-none">
@@ -341,7 +341,7 @@ export default function ProjectGrid() {
                     return (
                       <div
                         key={videoId + idx}
-                        className={`${isHorizontal ? `aspect-video col-span-2 md:col-span-3 ${lone ? 'lg:col-span-4' : 'lg:col-span-2'}` : 'aspect-[9/16]'} rounded-xl overflow-hidden bg-black/50 border border-white/5 relative group`}
+                        className={`${isHorizontal ? `aspect-video col-span-2 md:col-span-3 ${lone ? 'lg:col-span-4' : 'lg:col-span-2'}` : 'aspect-[9/16]'} rounded-xl overflow-hidden bg-[#111] border border-white/5 relative group`}
                       >
                         <LiteYouTube id={videoId} title={`${selectedProject.title} video ${idx + 1}`} />
                       </div>
@@ -394,7 +394,7 @@ function StackCard({
         style={lite ? { top: `calc(10svh + ${index * 10}px)` } : { scale, top: `calc(12vh + ${index * 14}px)` }}
         onClick={locked ? undefined : onOpen}
         data-card-id={project.id}
-        className={`stack-card ${locked ? "" : "cursor-grow cursor-pointer"} group relative origin-top w-full max-w-6xl h-[72svh] md:h-[66vh] rounded-3xl overflow-hidden bg-zinc-900 grid ${locked ? "grid-rows-[18%_1fr]" : "grid-rows-[36%_1fr]"} md:grid-rows-1 md:grid-cols-[1.1fr_1fr] md:shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)]`}
+        className={`stack-card ${locked ? "" : "cursor-grow cursor-pointer"} group relative origin-top w-full max-w-6xl h-[72svh] md:h-[66vh] rounded-3xl overflow-hidden bg-zinc-900 grid ${locked ? "grid-rows-[18%_1fr]" : "grid-rows-[36%_1fr]"} md:grid-rows-1 md:grid-cols-[1.1fr_1fr] md:shadow-[0_-20px_60px_-20px_var(--card-shadow)]`}
       >
         {/* Left: image */}
         <div className="relative overflow-hidden">
@@ -450,7 +450,7 @@ function StackCard({
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <a
                   href={accessHref}
-                  className="cursor-grow inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full text-sm md:text-base font-grotesk font-semibold text-black transition-transform duration-300 hover:scale-[1.03]"
+                  className="cursor-grow inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full text-sm md:text-base font-grotesk font-semibold text-[#1A1612] transition-transform duration-300 hover:scale-[1.03]"
                   style={{ background: "#E9B872" }}
                 >
                   <Lock aria-hidden size={16} strokeWidth={2.4} /> {accessLabel}
@@ -460,7 +460,7 @@ function StackCard({
             ) : (
               <span className="inline-flex items-center gap-2 text-sm md:text-base font-grotesk text-white/90">
                 {viewLabel}
-                <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" style={{ color: "#E9B872" }}>↗</span>
+                <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" style={{ color: "var(--accent-ink)" }}>↗</span>
               </span>
             )}
           </div>
@@ -512,7 +512,7 @@ function LiteYouTube({ id, title }: { id: string; title: string; key?: string | 
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover/yt:opacity-100 group-hover/yt:scale-105 transition-all duration-500"
       />
-      <span className="absolute inset-0 bg-black/20 group-hover/yt:bg-black/0 transition-colors" />
+      <span className="absolute inset-0 bg-[rgba(0,0,0,0.2)] group-hover/yt:bg-transparent transition-colors" />
     </button>
   );
 }

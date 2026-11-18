@@ -24,7 +24,7 @@ export default function Loader() {
       initial={{ y: 0 }}
       exit={{ y: "-100%" }}
       transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
-      className="fixed inset-0 z-[300] bg-[#050505] flex flex-col items-center justify-center"
+      className="fixed inset-0 z-[300] bg-bg-pitch flex flex-col items-center justify-center"
     >
       <motion.span
         initial={{ opacity: 0, y: 10 }}
