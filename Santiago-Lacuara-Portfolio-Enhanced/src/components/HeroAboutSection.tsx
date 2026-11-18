@@ -4,8 +4,16 @@ import { useLanguage } from "../context/LanguageContext";
 import Timeline from "./Timeline";
 import AboutPhoto from "./AboutPhoto";
 
+// Hero halo entrance timing (seconds). The pulse fires when the scale peaks.
+const HALO_DELAY = 1.6;          // the intro loader slides away at 1.1–1.8s; start as the center clears
+const HALO_DUR = 1.25;
+const HALO_PEAK_T = 0.4;          // fraction of the animation where it reaches HALO_MAX
+const HALO_MAX = 1.16;
+const HALO_PEAK = HALO_DELAY + HALO_DUR * HALO_PEAK_T;
+
 export default function HeroAboutSection() {
   const { t } = useLanguage();
+  const [reduceMotion] = useState(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   // Typewriter state for the hero title
   const [typed1, setTyped1] = useState("");
@@ -57,7 +65,7 @@ export default function HeroAboutSection() {
   const cursorSpin = useSpring(0, { stiffness: 22, damping: 14, mass: 1.6 });
   const ringRotate = useTransform([entrySpin, cursorSpin], ([a, b]: number[]) => a + b);
   useEffect(() => {
-    const ctrl = animate(entrySpin, 0, { duration: 2.2, delay: 0.9, ease: [0.65, 0, 0.35, 1] });
+    const ctrl = animate(entrySpin, 0, { duration: 2.2, delay: HALO_DELAY, ease: [0.65, 0, 0.35, 1] });
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { ctrl.stop(); entrySpin.set(0); return; }
     const onMove = (e: MouseEvent) => {
       const nx = e.clientX / window.innerWidth - 0.5;
@@ -80,11 +88,26 @@ export default function HeroAboutSection() {
     <>
       {/* ===================== HERO ===================== */}
       <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-        {/* Halo */}
+        {/* Pulse: dashed rings that ripple out the moment the halo hits its max scale */}
+        {!reduceMotion && [0, 1, 2].map((i) => (
+          <motion.svg
+            key={i}
+            viewBox="0 0 100 100"
+            initial={{ scale: 1, opacity: 0 }}
+            animate={{ scale: [1, 1.75], opacity: [0, 0.95 - i * 0.2, 0] }}
+            transition={{ duration: 1.5, delay: HALO_PEAK + i * 0.2, ease: [0.22, 1, 0.36, 1], times: [0, 0.08, 1] }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] md:w-[450px] md:h-[450px] overflow-visible pointer-events-none z-0"
+            aria-hidden
+          >
+            <circle cx="50" cy="50" r="49.6" pathLength={100} className="halo-ripple" style={{ rotate: `${i * 12}deg`, transformOrigin: "50px 50px" }} />
+          </motion.svg>
+        ))}
+
+        {/* Halo — bouncy scale-in: overshoots, settles back, small rebound */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", bounce: 0.6, duration: 1.5, delay: 0.9 }}
+          animate={{ scale: [0, HALO_MAX, 0.93, 1.03, 1], opacity: [0, 1, 1, 1, 1] }}
+          transition={{ duration: HALO_DUR, delay: HALO_DELAY, times: [0, HALO_PEAK_T, 0.66, 0.85, 1], ease: [[0.34, 1.3, 0.64, 1], [0.45, 0, 0.55, 1], [0.45, 0, 0.55, 1], [0.45, 0, 0.55, 1]] }}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] md:w-[450px] md:h-[450px] rounded-full halo-glow z-0"
         >
           {/* dashed ring — spins in on entry and turns with the cursor (eased both ways) */}

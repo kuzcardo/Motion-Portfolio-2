@@ -604,6 +604,9 @@
   stroke-linecap: round;
 }
 @media (max-width: 767px) { .halo-ring { stroke-width: 0.6; stroke-dasharray: 1.6 1.1; } }
+/* pulse rings that ripple out of the hero ring when it lands */
+.halo-ripple { fill: none; stroke: rgba(233, 184, 114, 0.8); stroke-width: 0.4; stroke-dasharray: 1.1 0.9; stroke-linecap: round; }
+@media (max-width: 767px) { .halo-ripple { stroke-width: 0.6; stroke-dasharray: 1.6 1.2; } }
 
 /* ---------- Style index (desktop) ---------- */
 .style-rail__pill {
@@ -724,3 +727,4 @@ html.theme-light .tl-card__stroke rect { stroke: rgba(60, 40, 15, 0.22); }
 html.theme-light .tl-ticket { border-color: rgba(60, 40, 15, 0.25); }
 html.theme-light .timeline-dot { background: var(--color-bg-pitch); }
 html.theme-light .reel-modal { background: rgba(251, 248, 243, 0.97); }
+html.theme-light .halo-ripple { stroke: rgba(176, 116, 44, 0.85); }
