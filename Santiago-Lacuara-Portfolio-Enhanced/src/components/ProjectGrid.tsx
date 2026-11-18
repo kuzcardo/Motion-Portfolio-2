@@ -1,7 +1,7 @@
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, type MotionValue } from "motion/react";
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../context/LanguageContext";
-import { X } from "lucide-react";
+import { X, Lock } from "lucide-react";
 
 interface Project {
   id: number;
@@ -9,6 +9,7 @@ interface Project {
   category: string;
   image?: string; // optional: cards without an image show a typographic cover
   videos?: string[]; // YouTube video IDs
+  requestAccess?: boolean; // not clickable: visitors ask by email for access to a private Drive
 }
 
 // Description + tools shown on the right side of each card
@@ -37,8 +38,8 @@ const details: Record<number, { en: string; es: string; tags: string[] }> = {
   8: { en: "Looping, generative backgrounds for screens, events, stages and live streams. Organic shapes, light and texture that move continuously without distracting, designed to loop seamlessly and to match the colours and the mood of each brand or show.",
        es: "Fondos generativos en loop para pantallas, eventos, escenarios y transmisiones en vivo. Formas orgánicas, luz y textura que se mueven todo el tiempo sin distraer, diseñadas para repetirse sin cortes y para acompañar los colores y el clima de cada marca o show.",
        tags: [...BASE] },
-  9: { en: "Longer edits — YouTube videos, interviews, podcasts and event recaps. I shape the story in the edit, find the pace, clean up the audio and add motion graphics, captions and sound design so long content stays engaging from the first minute to the last.",
-       es: "Ediciones largas: videos de YouTube, entrevistas, podcasts y resúmenes de eventos. Armo la historia en la edición, encuentro el ritmo, limpio el audio y sumo motion graphics, subtítulos y diseño sonoro para que el contenido largo atrape del primer al último minuto.",
+  9: { en: "Longer edits — YouTube videos, interviews, podcasts and event recaps. I shape the story in the edit, find the pace, clean up the audio and add motion graphics and sound design. These projects are client work protected by copyright and confidentiality agreements, so they aren't public: request access and I'll share the private Drive folder with you.",
+       es: "Ediciones largas: videos de YouTube, entrevistas, podcasts y resúmenes de eventos. Armo la historia en la edición, encuentro el ritmo, limpio el audio y sumo motion graphics y diseño sonoro. Estos proyectos son trabajos para clientes protegidos por derechos de autor y acuerdos de confidencialidad, por eso no son públicos: pedí acceso y te comparto la carpeta privada de Drive.",
        tags: [...BASE, "ElevenLabs"] },
   10: { en: "Videos generated with AI models and finished with motion design. I combine image and video models with my own animation, editing and code-driven tools to create visuals that would be impossible or too expensive to shoot, keeping a consistent look across every shot.",
         es: "Videos generados con modelos de IA y terminados con motion design. Combino modelos de imagen y video con mi propia animación, edición y herramientas basadas en código para crear visuales imposibles o demasiado caros de filmar, manteniendo una estética coherente en cada plano.",
@@ -100,8 +101,9 @@ const projects: Project[] = [
     title: "Long Form",
     category: "Video Editing",
     image: "/covers/long-form.webp",
-    // TODO: add YouTube IDs. Long videos are 16:9 by default.
-    videos: []
+    // Client work under copyright: no public videos, visitors request access to the Drive by email
+    videos: [],
+    requestAccess: true
   },
   {
     id: 10,
@@ -118,6 +120,17 @@ const horizontalIds = new Set(['gKfQuRYIzS0', '2_jLrn3C_rk', 'Ua3sqZmoKrQ', 'vxd
 
 // Projects whose videos are all horizontal (16:9) unless listed otherwise
 const horizontalByDefault = new Set<number>([9]);
+
+// Long Form: the button opens the visitor's mail app with a ready-to-send access request
+const ACCESS_EMAIL = "santiago.lopezlacuara@gmail.com";
+function accessMailto(lang: string) {
+  const es = lang === "es";
+  const subject = es ? "Solicitud de acceso — Long Form" : "Access request — Long Form";
+  const body = es
+    ? "Hola Santiago,\n\nVi tu portfolio y me gustaría ver tus trabajos de Long Form. ¿Me podrías dar acceso a la carpeta de Drive?\n\nNombre:\nEmpresa:\n\n¡Gracias!"
+    : "Hi Santiago,\n\nI saw your portfolio and would like to see your Long Form work. Could you give me access to the Drive folder?\n\nName:\nCompany:\n\nThanks!";
+  return `mailto:${ACCESS_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
 export default function ProjectGrid() {
   const { t, language } = useLanguage();
@@ -248,6 +261,8 @@ export default function ProjectGrid() {
               title={projTitle(project.title)}
               category={language === "es" ? "Estilo" : "Style"}
               viewLabel={t('projects.view')}
+              accessLabel={language === "es" ? "Solicitar acceso" : "Request access"}
+              accessHref={accessMailto(language)}
               desc={details[project.id]?.[language] ?? ""}
               tags={details[project.id]?.tags ?? []}
               onOpen={() => handleProjectClick(project)}
@@ -356,13 +371,14 @@ function useIsMobile() {
 }
 
 function StackCard({
-  project, index, total, scrollY, metrics, lite, isTop, isPast, title, category, viewLabel, desc, tags, onOpen,
+  project, index, total, scrollY, metrics, lite, isTop, isPast, title, category, viewLabel, accessLabel, accessHref, desc, tags, onOpen,
 }: {
   project: Project; index: number; total: number; scrollY: MotionValue<number>; metrics: { top: number; slot: number };
   lite: boolean; isTop: boolean; isPast: boolean;
-  title: string; category: string; viewLabel: string; desc: string; tags: string[]; onOpen: () => void; key?: string | number;
+  title: string; category: string; viewLabel: string; accessLabel: string; accessHref: string; desc: string; tags: string[]; onOpen: () => void; key?: string | number;
 }) {
   const isLast = index === total - 1;
+  const locked = !!project.requestAccess;
   // Desktop: from the moment this card lands until the next one covers it, shrink a
   // little and dim — driven by scroll. Mobile ("lite"): nothing runs per frame; the
   // sticky stacking is native (compositor) and the dim is a CSS transition.
@@ -376,9 +392,9 @@ function StackCard({
     <div className="sticky top-0 h-[86svh] md:h-[88vh] flex items-start justify-center">
       <motion.div
         style={lite ? { top: `calc(10svh + ${index * 10}px)` } : { scale, top: `calc(12vh + ${index * 14}px)` }}
-        onClick={onOpen}
+        onClick={locked ? undefined : onOpen}
         data-card-id={project.id}
-        className="stack-card cursor-grow group relative origin-top w-full max-w-6xl h-[72svh] md:h-[66vh] rounded-3xl overflow-hidden cursor-pointer bg-zinc-900 grid grid-rows-[36%_1fr] md:grid-rows-1 md:grid-cols-[1.1fr_1fr] md:shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)]"
+        className={`stack-card ${locked ? "" : "cursor-grow cursor-pointer"} group relative origin-top w-full max-w-6xl h-[72svh] md:h-[66vh] rounded-3xl overflow-hidden bg-zinc-900 grid ${locked ? "grid-rows-[18%_1fr]" : "grid-rows-[36%_1fr]"} md:grid-rows-1 md:grid-cols-[1.1fr_1fr] md:shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)]`}
       >
         {/* Left: image */}
         <div className="relative overflow-hidden">
@@ -417,7 +433,7 @@ function StackCard({
           <h3 className="mt-4 md:mt-5 text-3xl md:text-4xl xl:text-5xl font-poppins font-bold tracking-tight leading-[1.02]">
             {title}
           </h3>
-          <p className="mt-3 md:mt-5 text-[13px] md:text-[15px] font-light leading-relaxed text-white/65 line-clamp-4 md:line-clamp-7">
+          <p className={`mt-3 md:mt-5 text-[13px] md:text-[15px] font-light leading-relaxed text-white/65 ${locked ? "md:line-clamp-[8]" : "line-clamp-4 md:line-clamp-7"}`}>
             {desc}
           </p>
 
@@ -430,10 +446,23 @@ function StackCard({
               ))}
             </div>
             <div className="stack-card__divider my-4 md:my-5" />
-            <span className="inline-flex items-center gap-2 text-sm md:text-base font-grotesk text-white/90">
-              {viewLabel}
-              <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" style={{ color: "#E9B872" }}>↗</span>
-            </span>
+            {locked ? (
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <a
+                  href={accessHref}
+                  className="cursor-grow inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full text-sm md:text-base font-grotesk font-semibold text-black transition-transform duration-300 hover:scale-[1.03]"
+                  style={{ background: "#E9B872" }}
+                >
+                  <Lock aria-hidden size={16} strokeWidth={2.4} /> {accessLabel}
+                </a>
+                <span className="text-[11px] md:text-xs font-grotesk text-white/45 select-all">{ACCESS_EMAIL}</span>
+              </div>
+            ) : (
+              <span className="inline-flex items-center gap-2 text-sm md:text-base font-grotesk text-white/90">
+                {viewLabel}
+                <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" style={{ color: "#E9B872" }}>↗</span>
+              </span>
+            )}
           </div>
         </div>
 
