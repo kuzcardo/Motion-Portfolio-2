@@ -108,8 +108,8 @@ const projects: Project[] = [
     title: "AI Gen",
     category: "AI Video",
     image: "/covers/ai-gen.webp",
-    // TODO: add YouTube IDs. Add horizontal ones to the horizontalIds list.
-    videos: []
+    // Addnice ads + "¿Qué pasaría si...?" (shared with Social Media / Motion Narrative)
+    videos: ["6-GJIqHH7wg", "c8RDT3T0qNY", "rmQQdkXtuTE", "ZsfVYNSwr4A", "LfhWfHBPOMU", "A8VsAxeQFkI", "U6O9YYA4-3c"]
   }
 ];
 
