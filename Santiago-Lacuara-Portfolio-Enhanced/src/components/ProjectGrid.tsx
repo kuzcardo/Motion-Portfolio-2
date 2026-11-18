@@ -122,7 +122,7 @@ const horizontalIds = new Set(['gKfQuRYIzS0', '2_jLrn3C_rk', 'Ua3sqZmoKrQ', 'vxd
 const horizontalByDefault = new Set<number>([9]);
 
 // Long Form: the button opens the visitor's mail app with a ready-to-send access request
-const ACCESS_EMAIL = "santiago.lopezlacuara@gmail.com";
+const ACCESS_EMAIL = "santilacuara@gmail.com";
 function accessMailto(lang: string) {
   const es = lang === "es";
   const subject = es ? "Solicitud de acceso — Long Form" : "Access request — Long Form";

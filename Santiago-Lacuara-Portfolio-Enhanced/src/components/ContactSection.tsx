@@ -6,7 +6,7 @@ import { useLanguage } from "../context/LanguageContext";
 const links = [
   { key: "instagram", label: "Instagram", handle: "@santiagolacuara", href: "https://www.instagram.com/santiagolacuara/", Icon: Instagram, external: true },
   { key: "linkedin", label: "LinkedIn", handle: "Santiago Lopez Lacuara", href: "https://www.linkedin.com/in/santiago-lopez-lacuara-500b721a0/", Icon: Linkedin, external: true },
-  { key: "mail", label: "Mail", handle: "", href: "mailto:santiago.lopezlacuara@gmail.com", Icon: Mail, external: false },
+  { key: "mail", label: "Mail", handle: "", href: "mailto:santilacuara@gmail.com", Icon: Mail, external: false },
 ];
 
 /**

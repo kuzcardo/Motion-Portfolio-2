@@ -48,4 +48,4 @@ public/         Imágenes de las carátulas
 
 ## 👤 Contacto
 
-Santiago Lacuara — santiago.lopezlacuara@gmail.com
+Santiago Lacuara — santilacuara@gmail.com
