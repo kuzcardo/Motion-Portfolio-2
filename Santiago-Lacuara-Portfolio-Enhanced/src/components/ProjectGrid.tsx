@@ -52,7 +52,7 @@ const projects: Project[] = [
     title: "Motion Narrative",
     category: "Animation",
     image: "/covers/motion-narrative.webp",
-    videos: ["sZxtqu7NCSM", "ictQAlYS0MU", "FNh6MTrWGWc", "VOx9DeAi1rg", "Sq8HyEhXAYM", "ZFhZstN-gV0", "rYUx7LVM_iw","6-GJIqHH7wg", "zYzLro-d5jo"]
+    videos: ["ictQAlYS0MU", "FNh6MTrWGWc", "VOx9DeAi1rg", "Sq8HyEhXAYM", "ZFhZstN-gV0", "rYUx7LVM_iw","6-GJIqHH7wg", "zYzLro-d5jo"]
   },
   {
     id: 2,
@@ -111,7 +111,7 @@ const projects: Project[] = [
     category: "AI Video",
     image: "/covers/ai-gen.webp",
     // Addnice ads + "¿Qué pasaría si...?" (shared with Social Media / Motion Narrative)
-    videos: ["sZxtqu7NCSM", "ictQAlYS0MU", "FNh6MTrWGWc", "VOx9DeAi1rg", "6-GJIqHH7wg", "c8RDT3T0qNY", "rmQQdkXtuTE", "ZsfVYNSwr4A", "LfhWfHBPOMU", "A8VsAxeQFkI", "U6O9YYA4-3c"]
+    videos: ["ictQAlYS0MU", "FNh6MTrWGWc", "VOx9DeAi1rg", "6-GJIqHH7wg", "c8RDT3T0qNY", "rmQQdkXtuTE", "ZsfVYNSwr4A", "LfhWfHBPOMU", "A8VsAxeQFkI", "U6O9YYA4-3c"]
   }
 ];
 
