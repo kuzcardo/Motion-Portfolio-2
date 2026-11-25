@@ -52,7 +52,7 @@ const projects: Project[] = [
     title: "Motion Narrative",
     category: "Animation",
     image: "/covers/motion-narrative.webp",
-    videos: ["Sq8HyEhXAYM", "ZFhZstN-gV0", "rYUx7LVM_iw","6-GJIqHH7wg", "zYzLro-d5jo"]
+    videos: ["sZxtqu7NCSM", "ictQAlYS0MU", "Sq8HyEhXAYM", "ZFhZstN-gV0", "rYUx7LVM_iw","6-GJIqHH7wg", "zYzLro-d5jo"]
   },
   {
     id: 2,
