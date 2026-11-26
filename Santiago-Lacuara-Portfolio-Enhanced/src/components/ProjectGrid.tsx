@@ -49,10 +49,10 @@ const details: Record<number, { en: string; es: string; tags: string[] }> = {
 const projects: Project[] = [
   {
     id: 1,
-    title: "Motion Narrative",
+    title: "Motion Narrative & Explainers",
     category: "Animation",
     image: "/covers/motion-narrative.webp",
-    videos: ["ictQAlYS0MU", "FNh6MTrWGWc", "VOx9DeAi1rg", "U57Bh14GLQk", "BXKrqcyz-pk", "Sq8HyEhXAYM", "ZFhZstN-gV0", "rYUx7LVM_iw","6-GJIqHH7wg", "zYzLro-d5jo"]
+    videos: ["ictQAlYS0MU", "FNh6MTrWGWc", "VOx9DeAi1rg", "U57Bh14GLQk", "BXKrqcyz-pk", "BHAjy1JD5ZM", "Sq8HyEhXAYM", "ZFhZstN-gV0", "rYUx7LVM_iw","6-GJIqHH7wg", "zYzLro-d5jo"]
   },
   {
     id: 2,
@@ -110,8 +110,8 @@ const projects: Project[] = [
     title: "AI Gen",
     category: "AI Video",
     image: "/covers/ai-gen.webp",
-    // Addnice ads + "¿Qué pasaría si...?" (shared with Social Media / Motion Narrative)
-    videos: ["ictQAlYS0MU", "FNh6MTrWGWc", "VOx9DeAi1rg", "U57Bh14GLQk", "BXKrqcyz-pk", "6-GJIqHH7wg", "c8RDT3T0qNY", "rmQQdkXtuTE", "ZsfVYNSwr4A", "LfhWfHBPOMU", "A8VsAxeQFkI", "U6O9YYA4-3c"]
+    // Addnice ads + "¿Qué pasaría si...?" (shared with Social Media / Motion Narrative & Explainers)
+    videos: ["ictQAlYS0MU", "FNh6MTrWGWc", "VOx9DeAi1rg", "U57Bh14GLQk", "BXKrqcyz-pk", "BHAjy1JD5ZM", "6-GJIqHH7wg", "c8RDT3T0qNY", "rmQQdkXtuTE", "ZsfVYNSwr4A", "LfhWfHBPOMU", "A8VsAxeQFkI", "U6O9YYA4-3c"]
   }
 ];
 
@@ -136,7 +136,7 @@ export default function ProjectGrid() {
   const { t, language } = useLanguage();
   // Bilingual project titles (only the ones that differ per language)
   const titleES: Record<string, string> = {
-    "Motion Narrative": "Narrativa Animada",
+    "Motion Narrative & Explainers": "Narrativa Animada y Explainers",
     "Kinetic Typography": "Tipografía Cinética",
     Minimalist: "Minimalista",
     "Social Media": "Redes Sociales",
@@ -246,7 +246,7 @@ export default function ProjectGrid() {
         </motion.div>
 
         {/* Stacking cards — each one sticks to the top and the next slides over it */}
-        <div ref={stackRef} className="relative lg:pr-[230px] xl:pr-[250px]">
+        <div ref={stackRef} className="relative lg:pr-[310px] xl:pr-[320px]">
           {projects.map((project, index) => (
             <StackCard
               key={project.id}
@@ -430,7 +430,7 @@ function StackCard({
             </span>
           </div>
 
-          <h3 className="mt-4 md:mt-5 text-3xl md:text-4xl xl:text-5xl font-poppins font-bold tracking-tight leading-[1.02]">
+          <h3 className={`mt-4 md:mt-5 text-3xl ${title.length > 22 ? "md:text-[2rem] xl:text-[2.6rem]" : "md:text-4xl xl:text-5xl"} font-poppins font-bold tracking-tight leading-[1.02]`}>
             {title}
           </h3>
           <p className={`mt-3 md:mt-5 text-[13px] md:text-[15px] font-light leading-relaxed text-white/65 ${locked ? "md:line-clamp-[8]" : "line-clamp-4 md:line-clamp-7"}`}>

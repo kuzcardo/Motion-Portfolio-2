@@ -2,8 +2,8 @@ import { useLanguage } from "../context/LanguageContext";
 
 // Design style names (matches the project styles in the grid)
 const ITEMS = {
-  en: ["Motion Narrative", "Kinetic Typography", "Minimalist", "Social Media", "Logo Animation", "UX / UI", "Dynamic Backgrounds", "Long Form", "AI Gen"],
-  es: ["Narrativa Animada", "Tipografía Cinética", "Minimalista", "Redes Sociales", "Animación de Logos", "UX / UI", "Fondos Dinámicos", "Formato Largo", "Generado con IA"],
+  en: ["Motion Narrative & Explainers", "Kinetic Typography", "Minimalist", "Social Media", "Logo Animation", "UX / UI", "Dynamic Backgrounds", "Long Form", "AI Gen"],
+  es: ["Narrativa Animada y Explainers", "Tipografía Cinética", "Minimalista", "Redes Sociales", "Animación de Logos", "UX / UI", "Fondos Dinámicos", "Formato Largo", "Generado con IA"],
 };
 
 export default function Marquee() {
